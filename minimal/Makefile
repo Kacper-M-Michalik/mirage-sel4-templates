@@ -43,7 +43,7 @@ GUEST_FILE = guest.hvt
 
 SRC_DIR := src
 INC_DIR = include
-VMM_PD_OBJS := vmm.o printf.o util.o guest.o
+VMM_PD_OBJS := vmm.o elf_solo5.o printf.o util.o guest.o
 
 # Build settings
 CFLAGS := -mstrict-align -nostdlib -ffreestanding -g -O3 -Wall -Wno-unused-function -I$(BOARD_DIR)/include

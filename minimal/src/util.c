@@ -1,4 +1,5 @@
 #include <microkit.h>
+#include <util.h>
 #include <printf.h>
 
 /* This is required to use the printf library. */
