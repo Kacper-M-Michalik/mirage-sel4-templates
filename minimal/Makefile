@@ -1,4 +1,4 @@
-# Build toolchain setup
+### Arg checks ###
 ifeq ($(strip $(BUILD_DIR)),)
 $(error BUILD_DIR must be specified)
 endif
@@ -15,60 +15,53 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
+# Files to build
+IMAGE_FILE := loader.img
+REPORT_FILE := report.txt
+BUILD_MAKE := minimal.mk
+
+# Make relevant paths absolute and export
+override MICROKIT_SDK := $(abspath ${MICROKIT_SDK})
 BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
 ARCH := ${shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4}
 
-ifeq ($(ARCH),aarch64)
-	TOOLCHAIN := aarch64-none-elf
-	# No specific AArch64 flags
-	CFLAGS_ARCH :=
-else
-$(error Unsupported ARCH)
-endif
+DEPS := $(abspath ./deps)
+RESOURCES := $(abspath ./res)
+INC_DIR := $(abspath ./include)
+SRC_DIR := $(abspath ./src)
+SYSTEM := $(RESOURCES)/minimal.system
 
-CC := $(TOOLCHAIN)-gcc
-LD := $(TOOLCHAIN)-ld
-AS := $(TOOLCHAIN)-as
-OBJCOPY := $(TOOLCHAIN)-objcopy
-MICROKIT_TOOL ?= $(MICROKIT_SDK)/bin/microkit
+export BUILD_DIR
+export MICROKIT_SDK
+export MICROKIT_BOARD
+export MICROKIT_CONFIG
+export BOARD_DIR
+export ARCH
+export IMAGE_FILE
+export REPORT_FILE
+export INC_DIR
+export SRC_DIR
+export DEPS
+export RESOURCES
+export SYSTEM
 
-# Files to build
-IMAGE_FILE = $(BUILD_DIR)/loader.img
-REPORT_FILE = $(BUILD_DIR)/report.txt
-SYSTEM := minimal.system
-IMAGES := vmm.elf
+all: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
 
-RES_DIR = res
-GUEST_FILE = guest.hvt
+### Call actual build makefile ###
+$(BUILD_DIR)/$(IMAGE_FILE) $(REPORT_FILE): $(BUILD_DIR)/Makefile FORCE
+	${MAKE} -C ${BUILD_DIR} $(notdir $@)
 
-SRC_DIR := src
-INC_DIR = include
-VMM_PD_OBJS := vmm.o elf_solo5.o printf.o util.o guest.o
+${BUILD_DIR}/Makefile: $(BUILD_MAKE)
+	mkdir -p ${BUILD_DIR}
+	cp $(BUILD_MAKE) $@
 
-# Build settings
-CFLAGS := -mstrict-align -nostdlib -ffreestanding -g -O3 -Wall -Wno-unused-function -I$(BOARD_DIR)/include
-LDFLAGS := -L$(BOARD_DIR)/lib
-LIBS := -lmicrokit -Tmicrokit.ld
+qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+	qemu-system-$(ARCH) -machine virt,virtualization=on,highmem=off,secure=off \
+				-cpu cortex-a53 \
+				-serial mon:stdio \
+				-device loader,file=$(BUILD_DIR)/$(IMAGE_FILE),addr=0x70000000,cpu-num=0 \
+				-m size=2G \
+				-nographic
 
-# Build
-all: $(IMAGE_FILE)
-
-# Compile all C files in src
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c Makefile
-	$(CC) -c $(CFLAGS) -I$(INC_DIR) $< -o $@
-
-# Link C files in build dir to create VMM PD elf
-$(BUILD_DIR)/vmm.elf: $(addprefix $(BUILD_DIR)/, $(VMM_PD_OBJS))
-	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
-
-# Special rule to convert guest image into .o file for linking as symbol
-$(BUILD_DIR)/guest.o: $(RES_DIR)/$(GUEST_FILE)
-	$(OBJCOPY) -I binary -O elf64-littleaarch64 -B aarch64 \
-	--redefine-sym _binary_res_guest_hvt_start=_binary_guest_start \
-	--redefine-sym _binary_res_guest_hvt_end=_binary_guest_end \
-	--redefine-sym _binary_res_guest_hvt_size=_binary_guest_size \
-	$< $@
-
-# Build final image using Microkit_Tool
-$(IMAGE_FILE) $(REPORT_FILE): $(addprefix $(BUILD_DIR)/, $(IMAGES)) $(SYSTEM)
-	$(MICROKIT_TOOL) $(SYSTEM) --search-path $(BUILD_DIR) --board $(MICROKIT_BOARD) --config $(MICROKIT_CONFIG) -o $(IMAGE_FILE) -r $(REPORT_FILE)
+# Used to always force rule to run
+FORCE:

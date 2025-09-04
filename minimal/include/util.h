@@ -1,34 +1,12 @@
 #pragma once
 
-#include <microkit.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <printf.h>
+// TODO: Move this to solo5libvmm, have it include stdio, and only keep printf = sddf here 
 
-static void assert_fail(
-    const char  *assertion,
-    const char  *file,
-    unsigned int line,
-    const char  *function)
-{
-    printf("Failed assertion '%s' at %s:%u in function %s\n", assertion, file, line, function);
-    __builtin_trap();
-}
+#include <sddf/util/util.h>
+#include <sddf/util/printf.h>
 
-#ifndef assert
-#ifndef CONFIG_DEBUG_BUILD
+#include <hvt_abi.h>
 
-#define _unused(x) ((void)(x))
-#define assert(expr) _unused(expr)
-
-#else
-
-#define assert(expr) \
-    do { \
-        if (!(expr)) { \
-            assert_fail(#expr, __FILE__, __LINE__, __FUNCTION__); \
-        } \
-    } while(0)
-
-#endif
-#endif
+#define printf(...) do{ sddf_printf_(__VA_ARGS__); }while(0)
+#define LOG_VMM(...) do{ printf("MIRAGEVMM|INFO: "); printf(__VA_ARGS__); }while(0)
+#define LOG_VMM_ERR(...) do{ printf("MIRAGEVMM|ERROR: "); printf(__VA_ARGS__); }while(0)
