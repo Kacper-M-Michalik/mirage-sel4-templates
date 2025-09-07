@@ -152,7 +152,10 @@
 #define _SCTLR_I            _BITUL(12)
 
 uint64_t aarch64_get_counter_frequency(void);
+
 void setup_memory_mapping(uint8_t *mem, uint64_t mem_size);
-void enable_guest_float(size_t vcpu_id);
-void enable_guest_mmu(size_t vcpu_id);
-void setup_core_registers(size_t vcpu_id, size_t mem_size, uint64_t p_entry);
+void setup_system_registers(size_t vcpu_id);
+void setup_tcb_registers(size_t vcpu_id, size_t mem_size, uint64_t p_entry, uint64_t boot_info_addr);
+
+void vcpu_print_tcb_regs(size_t vcpu_id);
+void vcpu_print_sys_regs(size_t vcpu_id);

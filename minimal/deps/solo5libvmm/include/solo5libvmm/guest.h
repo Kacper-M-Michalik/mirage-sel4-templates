@@ -16,9 +16,9 @@
     mft - Mft structure passed to guest, represents available devices as per HVT spec
 */
 bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, const char* cmdline, size_t cmdline_len, const void* mft, size_t mft_len);
-//Executes from current PC value, need to figure out if pc points to next or last executed
+// Start guest execution from current PC value, need to figure out if pc points to next or last executed
 void guest_resume(size_t vcpu_id);
-//Just pause guest, gonna need to figure out how pc is setup
+// Pauses guest, gonna need to figure out how pc is setup
 void guest_stop(size_t vcpu_id);
-//Clears guest registers and memory, allows for setting up new guest image after 
+// Clears guest registers and memory, allows for setting up new guest image after 
 void guest_clear(size_t vcpu_id, uint8_t* guest_mem, size_t guest_mem_size);

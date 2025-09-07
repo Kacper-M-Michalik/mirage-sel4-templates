@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <microkit.h>
-#include <solo5libvmm/elf_solo5.h>
 #include <solo5libvmm/guest.h>
 #include <util.h>
 
@@ -16,17 +15,12 @@ size_t guest_ram_size = 0x10000000;
 
 void init(void)
 {
-    printf("Hello, world\n");
     printf("Guest Memory Address: %zu\n", guest_ram_vaddr);
-    printf("Guest image size linked: %zd\n", _binary_guest_size);
+    printf("Guest image size linked: %ld\n", _binary_guest_size);
     printf("Guest image size calculated: %zd\n", _binary_guest_end - _binary_guest_start);
 
     size_t guest_size = (size_t)(*_binary_guest_size);
-    
-    //int *test = (int*)guest_ram_vaddr;
-    ////*test = 100;
-    printf("Test write: %zu\n", *test);
-    
+
     uint64_t p_entry;
     uint64_t p_end;
     char cmdline[] = "cmdlinetest";
@@ -36,6 +30,19 @@ void init(void)
     printf("Load success: %d\n", success);
 
     guest_resume(0);
+
+    /*
+    printf("Base addr: %lu\n", guest_ram_vaddr + 1048576);
+
+    for (uint64_t i = 0; i < 100; i++) 
+    {
+        printf("0x%lx\n", *(guest_ram_vaddr + 1048576 + i));
+    }
+    //guest_stop(0);
+    //LOG_VMM("TEST STATUS:\n");
+    //vcpu_print_tcb_regs(0);
+    //vcpu_print_sys_regs(0);
+    */
 }
 
 void notified(microkit_channel ch)

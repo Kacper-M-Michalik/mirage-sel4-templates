@@ -6,21 +6,7 @@
 #include <util.h>
 
 void guest_resume(size_t vcpu_id) 
-{     
-    /*
-    seL4_UserContext regs;
-    seL4_Error err = seL4_TCB_ReadRegisters(BASE_VM_TCB_CAP + vcpu_id, false, 0, SEL4_USER_CONTEXT_SIZE, &regs);
-    assert(err == seL4_NoError);
-    err = seL4_TCB_WriteRegisters(
-        BASE_VM_TCB_CAP + vcpu,
-        seL4_True,
-        0,
-        0,
-        &ctxt
-    );
-    assert(err == seL4_NoError);
-    */
-
+{
     LOG_VMM("Resuming guest\n");
     seL4_Error err;
     seL4_UserContext ctxt = {0};
@@ -32,6 +18,7 @@ void guest_resume(size_t vcpu_id)
         &ctxt
     );
     assert(err == seL4_NoError);
+    LOG_VMM("Resumed guest!\n");
 }
 
 void guest_stop(size_t vcpu_id) 
@@ -63,9 +50,16 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     //TODO: Add memory, string, kernel checks here
     if (vcpu_id != 0) 
     {
-        LOG_VMM("Invalid vcpu_id, solo5 is single-threaded and only 1 VM allowed per VMM, vcpu_id should equal 0\n");
+        LOG_VMM("Invalid vcpu_id, solo5 is single-threaded and only 1 VM allowed per VMM, vcpu_id should be 0\n");
         return false;
     }
+    const uint64_t BOOT_INFO_ADDR = 0x10000;
+
+    //TODO: load abi note
+
+    //TODO: load mft note
+    //struct mft testmft;
+    //testmft.version =
 
     //TODO: get rid of constants, add protection propagation
     uint64_t p_entry;
@@ -81,7 +75,7 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
 
     // Allocate boot info in guest memory, and verify alignment
     //TODO: get rid of constant
-    struct hvt_boot_info* info = (struct hvt_boot_info*)((uint64_t)mem + 0x10000);
+    struct hvt_boot_info* info = (struct hvt_boot_info*)((uint64_t)mem + BOOT_INFO_ADDR);
     assert(((uint64_t)info % _Alignof(struct hvt_boot_info)) == 0);  
 
     info->mem_size = mem_size; //Do we subtract p_end?
@@ -93,6 +87,7 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     *((char*)(arg_ptr + cmdline_len)) = '\0';
     info->cmdline = arg_ptr - (uint64_t)mem; 
     arg_ptr += cmdline_len + 1;        
+    //TODO: PROPER MFT COPY
     memcpy((void*)arg_ptr, mft, mft_len);     
     *((char*)(arg_ptr + mft_len)) = '\0';     
     info->mft = arg_ptr - (uint64_t)mem;
@@ -108,19 +103,20 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
 
     LOG_VMM("mem addr : %zu\n", mem);  
     LOG_VMM("mem_size: %zu\n", info->mem_size);
-    LOG_VMM("boot_info vmm addr: %zu\n", info);
+    LOG_VMM("boot_info vmm addr: %zu\n", (uint64_t)info);
     LOG_VMM("boot_info guest addr: %zu\n", (uint64_t)(info) - (uint64_t)mem);
     LOG_VMM("cpu_cycle_freq: %zu\n", info->cpu_cycle_freq);
     LOG_VMM("kernel_end guest addr: %zu\n", info->kernel_end);
     LOG_VMM("cmdline guest addr: %zu\n", info->cmdline);
     LOG_VMM("mft guest addr: %zu\n", info->mft);
 
+    // ADD ARCH IFDEFS HERE - jus t for you information if you want to support more archs in the future
+
     //TODO: ADD STACK PROTECTION BASED ON MAX STACK
     setup_memory_mapping(mem, mem_size);
-    enable_guest_float(vcpu_id);
-    enable_guest_mmu(vcpu_id);
 
-    setup_core_registers(vcpu_id, mem_size, p_entry);
+    setup_system_registers(vcpu_id);
+    setup_tcb_registers(vcpu_id, mem_size, p_entry, BOOT_INFO_ADDR);
 
     return true;
 }

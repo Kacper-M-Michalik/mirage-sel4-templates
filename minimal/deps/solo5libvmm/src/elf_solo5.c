@@ -15,15 +15,10 @@
 #define EI_DATA_TARGET ELFDATA2MSB
 #endif
 
-/*
- * Solo5-owned ELF notes are identified by an n_name of "Solo5".
- */
+// Solo5-owned ELF notes are identified by an n_name of "Solo5"
 #define SOLO5_NOTE_NAME "Solo5"
 
-/*
- * Defines an Elf64_Nhdr with n_name filled in and padded to a 4-byte boundary,
- * i.e. the common part of a Solo5-owned Nhdr.
- */
+// Defines an Elf64_Nhdr with n_name filled in and padded to a 4-byte boundary, i.e. the common part of a Solo5-owned Nhdr
 struct solo5_nhdr {
     Elf64_Nhdr h;
     char n_name[(sizeof(SOLO5_NOTE_NAME) + 3) & -4];
@@ -75,10 +70,7 @@ static bool ehdr_is_valid(const Elf64_Ehdr* hdr)
     return true;
 }
 
-/*
- * Align (addr) down to (align) boundary. Returns 1 if (align) is not a
- * non-zero power of 2.
- */
+// Align (addr) down to (align) boundary. Returns 1 if (align) is not a non-zero power of 2
 static int align_down(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result)
 {
     if (align > 0 && (align & (align - 1)) == 0) 
@@ -91,8 +83,7 @@ static int align_down(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result
 
 /*
  * Align (addr) up to (align) boundary. Returns 1 if an overflow would occur or
- * (align) is not a non-zero power of 2, otherwise result in (*out_result) and
- * 0.
+ * (align) is not a non-zero power of 2, otherwise result in (*out_result) and 0
  */
 static int align_up(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result)
 {
@@ -109,32 +100,117 @@ static int align_up(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result)
         return 1;
 }
 
+bool elf_load_note(uint8_t* elf_ptr, size_t elf_size, uint32_t note_type, size_t note_align, uint8_t* out_note_buf, size_t out_note_buf_size, size_t* acc_note_size)
+{
+    Elf64_Phdr phdr;
+    Elf64_Ehdr ehdr;
+    uint8_t* note_data = NULL;
+    size_t note_offset, note_size, note_pad;
+
+    memcpy(&ehdr, elf_ptr, sizeof(Elf64_Ehdr));
+    if (!ehdr_is_valid(&ehdr)) return false;
+
+    size_t ph_size = ehdr.e_phnum * ehdr.e_phentsize;
+    
+    /*
+     * Find the phdr containing the Solo5 NOTE of type note_type, and sanity
+     * check its headers.
+     */
+    bool note_found = false;
+    uint8_t* next_phdr_address = elf_ptr + ehdr.e_phoff;
+    struct solo5_nhdr nhdr;
+
+    for (Elf64_Half ph_i = 0; ph_i < ehdr.e_phnum; ph_i++) 
+    {
+        memcpy(&phdr, next_phdr_address, sizeof(Elf64_Phdr));
+        next_phdr_address += sizeof(Elf64_Phdr);
+        //TODO: should add check that we stay under elf_size
+
+        if (phdr.p_type != PT_NOTE) continue;
+        /*
+        * p_filesz is less than minimum possible size of a NOTE header,
+        * reject the executable.
+        */
+        if (phdr.p_filesz < sizeof (Elf64_Nhdr)) return false;        
+        /*
+        * p_filesz is less than minimum possible size of a Solo5 NOTE
+        * header, ignore the note.
+        */
+        if (phdr.p_filesz < sizeof(struct solo5_nhdr)) continue;
+        
+        uint8_t* segment_data = elf_ptr + phdr.p_offset; 
+        memcpy(&nhdr, segment_data, sizeof(struct solo5_nhdr));
+
+        /*
+        * Not a Solo5-owned NOTE or invalid n_namesz, skip.
+        */
+        if (nhdr.h.n_namesz != sizeof(SOLO5_NOTE_NAME)) continue;
+        /*
+        * Not a Solo5-owned NOTE, skip.
+        */
+        if (strncmp(nhdr.n_name, SOLO5_NOTE_NAME, sizeof(SOLO5_NOTE_NAME)) != 0) continue;
+        /*
+        * Not the Solo5 NOTE of note_type we are looking for, skip.
+        */
+        if (nhdr.h.n_type != note_type) continue;
+
+        /*
+         * Check note descriptor (content) size is within limits, and
+         * cross-check with p_filesz.
+         */
+        //TODO: Should we add back max_note_size, or do we just use buf size as max?
+        if (nhdr.h.n_descsz < 1 || nhdr.h.n_descsz > out_note_buf_size) return false;
+        if (phdr.p_filesz < sizeof(struct solo5_nhdr) + nhdr.h.n_descsz) return false;
+
+        note_found = true;
+        break;
+    }
+    
+    if (!note_found) return false;
+
+    /*
+     * At this point we have verified that the NOTE at phdr[ph_i] is the Solo5
+     * NOTE with the requested note_type and its file sizes are sane.
+     *
+     * Adjust for alignment requested in (note_align) and read the note
+     * descriptor (content) following the header into dynamically allocated
+     * memory.
+     */
+    assert(note_align > 0 && (note_align & (note_align - 1)) == 0); //check note align is power of two
+    note_offset = (sizeof(struct solo5_nhdr) + (note_align - 1)) & -note_align;
+    assert(note_offset >= sizeof(struct solo5_nhdr));
+    note_pad = note_offset - sizeof(struct solo5_nhdr);
+    note_size = nhdr.h.n_descsz - note_pad;
+    assert(note_size != 0 && note_size <= nhdr.h.n_descsz);    
+
+    uint8_t* note_data_ptr = elf_ptr + phdr.p_offset + note_offset;
+    size_t read_size = out_note_buf_size < note_size ? out_note_buf_size : note_size;
+    memcpy(out_note_buf, note_data_ptr, read_size);
+    *acc_note_size = note_size; 
+
+    return true;
+}
+
 // Entry and end given in guest space (aka without mem offset)
 bool elf_load(uint8_t* elf_ptr, size_t elf_size, uint8_t* mem, size_t mem_size, uint64_t p_min_loadaddr, uint64_t* p_entry, uint64_t* p_end)
 {
     Elf64_Phdr phdr;
     Elf64_Ehdr ehdr;
-    /* Program entry point */
-    Elf64_Addr e_entry;     
-    /* Highest memory address occupied */            
+    Elf64_Addr e_entry;           
     Elf64_Addr e_end;                   
 
-    /* Copy into structs to guarentee struct required alignment */
+    // Copy into structs to guarantee struct required alignment
     memcpy(&ehdr, elf_ptr, sizeof(Elf64_Ehdr));
     if (!ehdr_is_valid(&ehdr)) return false;
 
-    /*
-     * e_entry must be non-zero and within range of our memory allocation.
-     */
+    // e_entry must be non-zero and within range of our memory
     if (ehdr.e_entry < p_min_loadaddr || ehdr.e_entry >= mem_size) return false;
 
     e_entry = ehdr.e_entry;
 
     size_t ph_size = ehdr.e_phnum * ehdr.e_phentsize;    
 
-    /*
-     * Load all program segments with the PT_LOAD directive.
-     */
+    // Load all program segments with the PT_LOAD directive
     uint8_t* next_phdr_address = elf_ptr + ehdr.e_phoff;
     e_end = 0;
     Elf64_Addr plast_vaddr = 0;
@@ -151,70 +227,56 @@ bool elf_load(uint8_t* elf_ptr, size_t elf_size, uint8_t* mem, size_t mem_size, 
         Elf64_Xword p_align = phdr.p_align;
         Elf64_Addr temp, p_vaddr_start, p_vaddr_end;
 
-        /*
-         * consider only non empty PT_LOAD
-         */
+        // Consider only non empty PT_LOAD
         if (phdr.p_filesz == 0 || phdr.p_type != PT_LOAD) continue;
 
-        /* Verify segment is at or above minimum text address */
+        // Verify segment is at or above minimum text address
         if (p_vaddr < p_min_loadaddr) return false;
 
         /*
          * The ELF specification mandates that program headers are sorted on
          * p_vaddr in ascending order. Enforce this, at the same time avoiding
-         * any surprises later.
+         * any surprises later
          */
         if (p_vaddr < plast_vaddr) return false;
         else plast_vaddr = p_vaddr;
 
-        /*
-         * Compute p_vaddr_start = p_vaddr, aligned down to requested alignment
-         * and verify result is within range.
-         */
+        // Compute p_vaddr_start = p_vaddr, aligned down to requested alignment and verify result is within range
         if (align_down(p_vaddr, p_align, &p_vaddr_start)) return false;
         if (p_vaddr_start < p_min_loadaddr) return false;
 
         /*
          * Disallow overlapping segments. This may be overkill, but in practice
-         * the Solo5 toolchains do not produce such executables.
+         * the Solo5 toolchains do not produce such executables
          */
         if (p_vaddr_start < e_end) return false;
 
-        /*
-         * Verify p_vaddr + p_filesz is within range.
-         */
+        // Verify p_vaddr + p_filesz is within range.
         if (p_vaddr >= mem_size) return false;
         if (__builtin_add_overflow(p_vaddr, p_filesz, &temp)) return false;
         if (temp > mem_size) return false;
 
-        /*
-         * Compute p_vaddr_end = p_vaddr + p_memsz, aligned up to requested
-         * alignment and verify result is within range.
-         */
+        // Compute p_vaddr_end = p_vaddr + p_memsz, aligned up to requested alignment and verify result is within range
         if (p_memsz < p_filesz) return false;
         if (__builtin_add_overflow(p_vaddr, p_memsz, &p_vaddr_end)) return false;
         if (align_up(p_vaddr_end, p_align, &p_vaddr_end)) return false;
         if (p_vaddr_end > mem_size) return false;
 
-        /*
-         * Keep track of the highest byte of memory occupied by the program.
-         */
+        // Keep track of the highest byte of memory occupied by the program
         if (p_vaddr_end > e_end) 
         {
             e_end = p_vaddr_end;
-            /*
-             * Double check result for host (caller) address space overflow.
-             */
+            // Double check result for host (caller) address space overflow
             assert((mem + e_end) >= (mem + p_min_loadaddr));
         }
 
         /*
          * Load the segment (p_vaddr ... p_vaddr + p_filesz) into host memory space at
          * host_vaddr (where mem is where we mapped guest memory in host space) and ensure 
-         * any BSS (p_memsz - p_filesz) is initialised to zero.
+         * any BSS (p_memsz - p_filesz) is initialised to zero
          */
         uint8_t* host_vaddr = mem + p_vaddr;
-        /* Double check result for host (caller) address space overflow. */
+        // Double check result for host (caller) address space overflow
         assert(host_vaddr >= (mem + p_min_loadaddr));
 
         uint8_t* segment_data = elf_ptr + phdr.p_offset;
