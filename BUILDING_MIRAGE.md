@@ -16,10 +16,8 @@ make build
 Cross-compiling on x86_64 requires a few extra steps, running them in this order is important; any other commands that would cause reinstallation of the dependencies will drop the cross-compiler: 
 
 ```sh
-# We have to first build for x86_64 unfortunately 
 mirage configure -t hvt
 make depends
-make build
 # These steps specifically allow cross compiling
 opam install ocaml-solo5-cross-aarch64
 dune clean
