@@ -2,8 +2,9 @@
 #include <microkit.h>
 #include <solo5libvmm/guest.h>
 #include <solo5libvmm/elf_solo5.h>
-#include <solo5libvmm/vcpu_aarch64.h>
-#include <util.h>
+#include <solo5libvmm/aarch64/vcpu.h>
+#include <solo5libvmm/hvt_abi.h>
+#include <solo5libvmm/util.h>
 
 void guest_resume(size_t vcpu_id) 
 {
@@ -38,22 +39,25 @@ void guest_clear(size_t vcpu_id, uint8_t* guest_mem, size_t guest_mem_size)
     memset((uint8_t*)guest_mem, 0, guest_mem_size);
 
     LOG_VMM("Resetting guest registers\n");
-      
-    //TODO: IMPLEMENT REGISTER RESET
-    //vcpu_reset(vcpu_id);  
+    vcpu_reset_regs(vcpu_id);  
 
     LOG_VMM("Guest reset\n");
 }
 
-bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, const char* cmdline, size_t cmdline_len, const void* mft, size_t mft_len)
+bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, char* cmdline, size_t cmdline_len, void* mft, size_t mft_len)
 {
-    //TODO: Add memory, string, kernel checks here
+    //TODO: Add max cmd len check
+    //TODO: Add mem_size alignment fix
+    //TODO: Check max stack is reasonable and doesnt overlap text/min heap
+    //TODO: Check if mem_size big enough for kernel
     if (vcpu_id != 0) 
     {
         LOG_VMM("Invalid vcpu_id, solo5 is single-threaded and only 1 VM allowed per VMM, vcpu_id should be 0\n");
         return false;
     }
+    //TODO: MOVE CONSTANTS
     const uint64_t BOOT_INFO_ADDR = 0x10000;
+    const uint64_t MIN_TEXT_ADDR = 0x100000;
 
     //TODO: load abi note
 
@@ -61,10 +65,10 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     //struct mft testmft;
     //testmft.version =
 
-    //TODO: get rid of constants, add protection propagation
+    //TODO: Add protection propagation
     uint64_t p_entry;
     uint64_t p_end;
-    if (!elf_load(kernel, kernel_size, mem, mem_size, 0x100000, &p_entry, &p_end))
+    if (!elf_load(kernel, kernel_size, mem, mem_size, MIN_TEXT_ADDR, &p_entry, &p_end))
     {
         LOG_VMM("Failed to load HVT file (incompatible or invalid)\n");
         return false;
@@ -74,7 +78,6 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     LOG_VMM("p_end: %zu\n", p_end);
 
     // Allocate boot info in guest memory, and verify alignment
-    //TODO: get rid of constant
     struct hvt_boot_info* info = (struct hvt_boot_info*)((uint64_t)mem + BOOT_INFO_ADDR);
     assert(((uint64_t)info % _Alignof(struct hvt_boot_info)) == 0);  
 
@@ -94,8 +97,7 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     arg_ptr += mft_len + 1;
 
     // Check arguments fit in space and don't overlap text
-    //TODO: Get rid of constant
-    if (arg_ptr - (uint64_t)mem > 0x100000) 
+    if (arg_ptr - (uint64_t)mem > MIN_TEXT_ADDR) 
     {
         LOG_VMM("cmdline + mft args too long, they overwrite program text\n");
         return false;
@@ -110,13 +112,13 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     LOG_VMM("cmdline guest addr: %zu\n", info->cmdline);
     LOG_VMM("mft guest addr: %zu\n", info->mft);
 
-    // ADD ARCH IFDEFS HERE - jus t for you information if you want to support more archs in the future
+    // Add arch IFDEFS here, if you want to support more archs in the future
 
-    //TODO: ADD STACK PROTECTION BASED ON MAX STACK
+    //TODO: Add stack protection based on max stack
     setup_memory_mapping(mem, mem_size);
 
-    setup_system_registers(vcpu_id);
-    setup_tcb_registers(vcpu_id, mem_size, p_entry, BOOT_INFO_ADDR);
+    setup_system_registers(vcpu_id, mem_size);
+    setup_tcb_registers(vcpu_id, p_entry, BOOT_INFO_ADDR);
 
     return true;
 }

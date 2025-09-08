@@ -4,7 +4,7 @@
 #include <string.h>
 #include <elf.h>
 #include <solo5libvmm/elf_solo5.h>
-#include <util.h>
+#include <solo5libvmm/util.h>
 
 #define EM_TARGET EM_AARCH64
 #define EM_PAGE_SIZE 0x1000
@@ -22,11 +22,7 @@
 struct solo5_nhdr {
     Elf64_Nhdr h;
     char n_name[(sizeof(SOLO5_NOTE_NAME) + 3) & -4];
-    /*
-     * Note content ("descriptor" in ELF terms) follows in the file here,
-     * possibly with some internal alignment before the first struct member
-     * (see below).
-     */
+    // Note content ("descriptor" in ELF terms) follows in the file here, possibly with some internal alignment before the first struct member (see below)
 };
 
 _Static_assert((sizeof(struct solo5_nhdr)) == (sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 8),
@@ -81,10 +77,7 @@ static int align_down(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result
     else return 1;
 }
 
-/*
- * Align (addr) up to (align) boundary. Returns 1 if an overflow would occur or
- * (align) is not a non-zero power of 2, otherwise result in (*out_result) and 0
- */
+// Align (addr) up to (align) boundary. Returns 1 if an overflow would occur or (align) is not a non-zero power of 2, otherwise result in (*out_result) and 0
 static int align_up(Elf64_Addr addr, Elf64_Xword align, Elf64_Addr* out_result)
 {
     Elf64_Addr result;

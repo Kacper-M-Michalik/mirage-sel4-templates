@@ -37,7 +37,7 @@ $(IMAGES): libsddf_util_debug.a
 include $(SDDF)/util/util.mk
 
 # TEMP
-vmm.elf: vmm.o elf_solo5.o guest.o vcpu_aarch64.o guest_img.o libsddf_util_debug.a
+vmm.elf: vmm.o guest.o elf_solo5.o fault.o vcpu.o guest_img.o libsddf_util_debug.a
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 vmm.o: $(SRC_DIR)/vmm.c
@@ -45,6 +45,8 @@ vmm.o: $(SRC_DIR)/vmm.c
 
 # TEMP RULE FOR BUILDING SOLO5LIBVMM
 %.o: $(LIBVMM)/src/%.c
+	$(CC) -c $(CFLAGS) $< -o $@
+%.o: $(LIBVMM)/src/aarch64/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 guest_img.o: $(RESOURCES)/$(GUEST_FILE) Makefile
