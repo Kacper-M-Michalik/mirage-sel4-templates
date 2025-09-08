@@ -8,8 +8,7 @@
 // Data for the guest's kernel image
 extern uint8_t _binary_guest_start[];
 extern uint8_t _binary_guest_end[];
-// Objcopy adds pointer to value, not direct value
-extern size_t _binary_guest_size[];
+extern size_t _binary_guest_size[]; // Doesn't work without []
 
 // Linked by microkit using system xml
 uint8_t* guest_ram_vaddr;
@@ -18,12 +17,11 @@ size_t guest_ram_size;
 void init(void)
 {
     printf("Guest Memory Address: %zu\n", guest_ram_vaddr);
-    printf("Guest image size linked: %ld\n", *_binary_guest_size);
+    printf("Guest image size linked: %ld\n", _binary_guest_size);
 
     char cmdline[] = "";
-    char mft[] = "";
 
-    bool success = guest_setup(0, _binary_guest_start, *_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline), mft, strlen(mft));
+    bool success = guest_setup(0, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
     printf("Load success: %d\n", success);
 
     if (success)

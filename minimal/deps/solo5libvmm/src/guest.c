@@ -44,10 +44,14 @@ void guest_clear(size_t vcpu_id, uint8_t* guest_mem, size_t guest_mem_size)
     LOG_VMM("Guest reset\n");
 }
 
-bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, char* cmdline, size_t cmdline_len, void* mft, size_t mft_len)
+bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, char* cmdline, size_t cmdline_len)
 {
-    //TODO: Add max cmd len check
-    //TODO: Add mem_size alignment fix
+    // Avoiding using defines
+    const uint64_t BOOT_INFO_ADDR = AARCH64_BOOT_INFO;
+    const uint64_t MIN_TEXT_ADDR = AARCH64_GUEST_MIN_BASE;
+    const size_t MAX_CMDLINE_LEN = HVT_CMDLINE_SIZE;
+    const size_t MEM_SIZE_ALIGN = AARCH64_GUEST_BLOCK_SIZE;
+
     //TODO: Check max stack is reasonable and doesnt overlap text/min heap
     //TODO: Check if mem_size big enough for kernel
     if (vcpu_id != 0) 
@@ -55,11 +59,21 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
         LOG_VMM("Invalid vcpu_id, solo5 is single-threaded and only 1 VM allowed per VMM, vcpu_id should be 0\n");
         return false;
     }
-    //TODO: MOVE CONSTANTS
-    const uint64_t BOOT_INFO_ADDR = 0x10000;
-    const uint64_t MIN_TEXT_ADDR = 0x100000;
+    if (cmdline_len > MAX_CMDLINE_LEN)
+    {
+        LOG_VMM("cmdline longer than max: %ld (len=%ld)\n", MAX_CMDLINE_LEN, cmdline_len);
+        return false;
+    }
 
-    //TODO: load abi note
+    assert(MEM_SIZE_ALIGN % 16 == 0);
+    if (mem_size % MEM_SIZE_ALIGN != 0)
+    {
+        size_t new_mem_size = (mem_size / MEM_SIZE_ALIGN) * MEM_SIZE_ALIGN;
+        LOG_VMM("mem_size truncated DOWN to %ld byte alignment (old=%ld new=%ld)\n", MEM_SIZE_ALIGN, mem_size, new_mem_size);
+        mem_size = new_mem_size;
+    }  
+
+    //TODO: load abi note + do note check
 
     //TODO: load mft note
     //struct mft testmft;
@@ -91,10 +105,10 @@ bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* m
     info->cmdline = arg_ptr - (uint64_t)mem; 
     arg_ptr += cmdline_len + 1;        
     //TODO: PROPER MFT COPY
-    memcpy((void*)arg_ptr, mft, mft_len);     
-    *((char*)(arg_ptr + mft_len)) = '\0';     
-    info->mft = arg_ptr - (uint64_t)mem;
-    arg_ptr += mft_len + 1;
+    //memcpy((void*)arg_ptr, mft, mft_len);     
+    //*((char*)(arg_ptr + mft_len)) = '\0';     
+    //info->mft = arg_ptr - (uint64_t)mem;
+    //arg_ptr += mft_len + 1;
 
     // Check arguments fit in space and don't overlap text
     if (arg_ptr - (uint64_t)mem > MIN_TEXT_ADDR) 

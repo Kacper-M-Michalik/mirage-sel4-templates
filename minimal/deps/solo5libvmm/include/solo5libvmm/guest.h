@@ -15,7 +15,7 @@
     cmdline - Command line arg passed to guest as per HVT spec
     mft - Mft structure passed to guest, represents available devices as per HVT spec
 */
-bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, char* cmdline, size_t cmdline_len, void* mft, size_t mft_len);
+bool guest_setup(size_t vcpu_id, uint8_t* kernel, size_t kernel_size, uint8_t* mem, size_t mem_size, size_t max_stack_size, char* cmdline, size_t cmdline_len);
 
 // Start guest execution from current PC value, need to figure out if pc points to next or last executed
 void guest_resume(size_t vcpu_id);
