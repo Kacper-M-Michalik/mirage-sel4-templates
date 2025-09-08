@@ -7,17 +7,17 @@
 
 # Loader Regions
 
-       <Region name=PD-ELF VMM-0 addr=0x6025b000 size=29060>
-       <Region name=PD-ELF VMM-1 addr=0x60263000 size=5019520>
+       <Region name=PD-ELF VMM-0 addr=0x6025b000 size=29044>
+       <Region name=PD-ELF VMM-1 addr=0x60263000 size=5043984>
 
 # Monitor (Initial Task) Info
 
      virtual memory : MemoryRegion(base=0x8a000000, end=0x8a00a000)
-     physical memory: MemoryRegion(base=0x6072d000, end=0x60737000)
+     physical memory: MemoryRegion(base=0x60733000, end=0x6073d000)
 
 # Allocated Kernel Objects Summary
 
-     # of allocated objects: 1,386
+     # of allocated objects: 1,392
 
 # Bootstrap Kernel Invocations Summary
 
@@ -26,8 +26,8 @@
 
 # System Kernel Invocations Summary
 
-     # of invocations   :      1,285
-     size of invocations:     92,544
+     # of invocations   :      1,291
+     size of invocations:     92,976
 
 # Allocated Kernel Objects Detail
 
@@ -1265,158 +1265,164 @@
     Page(4 KiB): MR=ELF:VMM-1 @ 6072a000               9 cap_addr=80000000000004e7 phys_addr=6072a000
     Page(4 KiB): MR=ELF:VMM-1 @ 6072b000               9 cap_addr=80000000000004e8 phys_addr=6072b000
     Page(4 KiB): MR=ELF:VMM-1 @ 6072c000               9 cap_addr=80000000000004e9 phys_addr=6072c000
-    Page(2 MiB): MR=guest_ram #0                       10 cap_addr=80000000000004ea phys_addr=70000000
-    Page(2 MiB): MR=guest_ram #1                       10 cap_addr=80000000000004eb phys_addr=70200000
-    Page(2 MiB): MR=guest_ram #2                       10 cap_addr=80000000000004ec phys_addr=70400000
-    Page(2 MiB): MR=guest_ram #3                       10 cap_addr=80000000000004ed phys_addr=70600000
-    Page(2 MiB): MR=guest_ram #4                       10 cap_addr=80000000000004ee phys_addr=70800000
-    Page(2 MiB): MR=guest_ram #5                       10 cap_addr=80000000000004ef phys_addr=70a00000
-    Page(2 MiB): MR=guest_ram #6                       10 cap_addr=80000000000004f0 phys_addr=70c00000
-    Page(2 MiB): MR=guest_ram #7                       10 cap_addr=80000000000004f1 phys_addr=70e00000
-    Page(2 MiB): MR=guest_ram #8                       10 cap_addr=80000000000004f2 phys_addr=71000000
-    Page(2 MiB): MR=guest_ram #9                       10 cap_addr=80000000000004f3 phys_addr=71200000
-    Page(2 MiB): MR=guest_ram #10                      10 cap_addr=80000000000004f4 phys_addr=71400000
-    Page(2 MiB): MR=guest_ram #11                      10 cap_addr=80000000000004f5 phys_addr=71600000
-    Page(2 MiB): MR=guest_ram #12                      10 cap_addr=80000000000004f6 phys_addr=71800000
-    Page(2 MiB): MR=guest_ram #13                      10 cap_addr=80000000000004f7 phys_addr=71a00000
-    Page(2 MiB): MR=guest_ram #14                      10 cap_addr=80000000000004f8 phys_addr=71c00000
-    Page(2 MiB): MR=guest_ram #15                      10 cap_addr=80000000000004f9 phys_addr=71e00000
-    Page(2 MiB): MR=guest_ram #16                      10 cap_addr=80000000000004fa phys_addr=72000000
-    Page(2 MiB): MR=guest_ram #17                      10 cap_addr=80000000000004fb phys_addr=72200000
-    Page(2 MiB): MR=guest_ram #18                      10 cap_addr=80000000000004fc phys_addr=72400000
-    Page(2 MiB): MR=guest_ram #19                      10 cap_addr=80000000000004fd phys_addr=72600000
-    Page(2 MiB): MR=guest_ram #20                      10 cap_addr=80000000000004fe phys_addr=72800000
-    Page(2 MiB): MR=guest_ram #21                      10 cap_addr=80000000000004ff phys_addr=72a00000
-    Page(2 MiB): MR=guest_ram #22                      10 cap_addr=8000000000000500 phys_addr=72c00000
-    Page(2 MiB): MR=guest_ram #23                      10 cap_addr=8000000000000501 phys_addr=72e00000
-    Page(2 MiB): MR=guest_ram #24                      10 cap_addr=8000000000000502 phys_addr=73000000
-    Page(2 MiB): MR=guest_ram #25                      10 cap_addr=8000000000000503 phys_addr=73200000
-    Page(2 MiB): MR=guest_ram #26                      10 cap_addr=8000000000000504 phys_addr=73400000
-    Page(2 MiB): MR=guest_ram #27                      10 cap_addr=8000000000000505 phys_addr=73600000
-    Page(2 MiB): MR=guest_ram #28                      10 cap_addr=8000000000000506 phys_addr=73800000
-    Page(2 MiB): MR=guest_ram #29                      10 cap_addr=8000000000000507 phys_addr=73a00000
-    Page(2 MiB): MR=guest_ram #30                      10 cap_addr=8000000000000508 phys_addr=73c00000
-    Page(2 MiB): MR=guest_ram #31                      10 cap_addr=8000000000000509 phys_addr=73e00000
-    Page(2 MiB): MR=guest_ram #32                      10 cap_addr=800000000000050a phys_addr=74000000
-    Page(2 MiB): MR=guest_ram #33                      10 cap_addr=800000000000050b phys_addr=74200000
-    Page(2 MiB): MR=guest_ram #34                      10 cap_addr=800000000000050c phys_addr=74400000
-    Page(2 MiB): MR=guest_ram #35                      10 cap_addr=800000000000050d phys_addr=74600000
-    Page(2 MiB): MR=guest_ram #36                      10 cap_addr=800000000000050e phys_addr=74800000
-    Page(2 MiB): MR=guest_ram #37                      10 cap_addr=800000000000050f phys_addr=74a00000
-    Page(2 MiB): MR=guest_ram #38                      10 cap_addr=8000000000000510 phys_addr=74c00000
-    Page(2 MiB): MR=guest_ram #39                      10 cap_addr=8000000000000511 phys_addr=74e00000
-    Page(2 MiB): MR=guest_ram #40                      10 cap_addr=8000000000000512 phys_addr=75000000
-    Page(2 MiB): MR=guest_ram #41                      10 cap_addr=8000000000000513 phys_addr=75200000
-    Page(2 MiB): MR=guest_ram #42                      10 cap_addr=8000000000000514 phys_addr=75400000
-    Page(2 MiB): MR=guest_ram #43                      10 cap_addr=8000000000000515 phys_addr=75600000
-    Page(2 MiB): MR=guest_ram #44                      10 cap_addr=8000000000000516 phys_addr=75800000
-    Page(2 MiB): MR=guest_ram #45                      10 cap_addr=8000000000000517 phys_addr=75a00000
-    Page(2 MiB): MR=guest_ram #46                      10 cap_addr=8000000000000518 phys_addr=75c00000
-    Page(2 MiB): MR=guest_ram #47                      10 cap_addr=8000000000000519 phys_addr=75e00000
-    Page(2 MiB): MR=guest_ram #48                      10 cap_addr=800000000000051a phys_addr=76000000
-    Page(2 MiB): MR=guest_ram #49                      10 cap_addr=800000000000051b phys_addr=76200000
-    Page(2 MiB): MR=guest_ram #50                      10 cap_addr=800000000000051c phys_addr=76400000
-    Page(2 MiB): MR=guest_ram #51                      10 cap_addr=800000000000051d phys_addr=76600000
-    Page(2 MiB): MR=guest_ram #52                      10 cap_addr=800000000000051e phys_addr=76800000
-    Page(2 MiB): MR=guest_ram #53                      10 cap_addr=800000000000051f phys_addr=76a00000
-    Page(2 MiB): MR=guest_ram #54                      10 cap_addr=8000000000000520 phys_addr=76c00000
-    Page(2 MiB): MR=guest_ram #55                      10 cap_addr=8000000000000521 phys_addr=76e00000
-    Page(2 MiB): MR=guest_ram #56                      10 cap_addr=8000000000000522 phys_addr=77000000
-    Page(2 MiB): MR=guest_ram #57                      10 cap_addr=8000000000000523 phys_addr=77200000
-    Page(2 MiB): MR=guest_ram #58                      10 cap_addr=8000000000000524 phys_addr=77400000
-    Page(2 MiB): MR=guest_ram #59                      10 cap_addr=8000000000000525 phys_addr=77600000
-    Page(2 MiB): MR=guest_ram #60                      10 cap_addr=8000000000000526 phys_addr=77800000
-    Page(2 MiB): MR=guest_ram #61                      10 cap_addr=8000000000000527 phys_addr=77a00000
-    Page(2 MiB): MR=guest_ram #62                      10 cap_addr=8000000000000528 phys_addr=77c00000
-    Page(2 MiB): MR=guest_ram #63                      10 cap_addr=8000000000000529 phys_addr=77e00000
-    Page(2 MiB): MR=guest_ram #64                      10 cap_addr=800000000000052a phys_addr=78000000
-    Page(2 MiB): MR=guest_ram #65                      10 cap_addr=800000000000052b phys_addr=78200000
-    Page(2 MiB): MR=guest_ram #66                      10 cap_addr=800000000000052c phys_addr=78400000
-    Page(2 MiB): MR=guest_ram #67                      10 cap_addr=800000000000052d phys_addr=78600000
-    Page(2 MiB): MR=guest_ram #68                      10 cap_addr=800000000000052e phys_addr=78800000
-    Page(2 MiB): MR=guest_ram #69                      10 cap_addr=800000000000052f phys_addr=78a00000
-    Page(2 MiB): MR=guest_ram #70                      10 cap_addr=8000000000000530 phys_addr=78c00000
-    Page(2 MiB): MR=guest_ram #71                      10 cap_addr=8000000000000531 phys_addr=78e00000
-    Page(2 MiB): MR=guest_ram #72                      10 cap_addr=8000000000000532 phys_addr=79000000
-    Page(2 MiB): MR=guest_ram #73                      10 cap_addr=8000000000000533 phys_addr=79200000
-    Page(2 MiB): MR=guest_ram #74                      10 cap_addr=8000000000000534 phys_addr=79400000
-    Page(2 MiB): MR=guest_ram #75                      10 cap_addr=8000000000000535 phys_addr=79600000
-    Page(2 MiB): MR=guest_ram #76                      10 cap_addr=8000000000000536 phys_addr=79800000
-    Page(2 MiB): MR=guest_ram #77                      10 cap_addr=8000000000000537 phys_addr=79a00000
-    Page(2 MiB): MR=guest_ram #78                      10 cap_addr=8000000000000538 phys_addr=79c00000
-    Page(2 MiB): MR=guest_ram #79                      10 cap_addr=8000000000000539 phys_addr=79e00000
-    Page(2 MiB): MR=guest_ram #80                      10 cap_addr=800000000000053a phys_addr=7a000000
-    Page(2 MiB): MR=guest_ram #81                      10 cap_addr=800000000000053b phys_addr=7a200000
-    Page(2 MiB): MR=guest_ram #82                      10 cap_addr=800000000000053c phys_addr=7a400000
-    Page(2 MiB): MR=guest_ram #83                      10 cap_addr=800000000000053d phys_addr=7a600000
-    Page(2 MiB): MR=guest_ram #84                      10 cap_addr=800000000000053e phys_addr=7a800000
-    Page(2 MiB): MR=guest_ram #85                      10 cap_addr=800000000000053f phys_addr=7aa00000
-    Page(2 MiB): MR=guest_ram #86                      10 cap_addr=8000000000000540 phys_addr=7ac00000
-    Page(2 MiB): MR=guest_ram #87                      10 cap_addr=8000000000000541 phys_addr=7ae00000
-    Page(2 MiB): MR=guest_ram #88                      10 cap_addr=8000000000000542 phys_addr=7b000000
-    Page(2 MiB): MR=guest_ram #89                      10 cap_addr=8000000000000543 phys_addr=7b200000
-    Page(2 MiB): MR=guest_ram #90                      10 cap_addr=8000000000000544 phys_addr=7b400000
-    Page(2 MiB): MR=guest_ram #91                      10 cap_addr=8000000000000545 phys_addr=7b600000
-    Page(2 MiB): MR=guest_ram #92                      10 cap_addr=8000000000000546 phys_addr=7b800000
-    Page(2 MiB): MR=guest_ram #93                      10 cap_addr=8000000000000547 phys_addr=7ba00000
-    Page(2 MiB): MR=guest_ram #94                      10 cap_addr=8000000000000548 phys_addr=7bc00000
-    Page(2 MiB): MR=guest_ram #95                      10 cap_addr=8000000000000549 phys_addr=7be00000
-    Page(2 MiB): MR=guest_ram #96                      10 cap_addr=800000000000054a phys_addr=7c000000
-    Page(2 MiB): MR=guest_ram #97                      10 cap_addr=800000000000054b phys_addr=7c200000
-    Page(2 MiB): MR=guest_ram #98                      10 cap_addr=800000000000054c phys_addr=7c400000
-    Page(2 MiB): MR=guest_ram #99                      10 cap_addr=800000000000054d phys_addr=7c600000
-    Page(2 MiB): MR=guest_ram #100                     10 cap_addr=800000000000054e phys_addr=7c800000
-    Page(2 MiB): MR=guest_ram #101                     10 cap_addr=800000000000054f phys_addr=7ca00000
-    Page(2 MiB): MR=guest_ram #102                     10 cap_addr=8000000000000550 phys_addr=7cc00000
-    Page(2 MiB): MR=guest_ram #103                     10 cap_addr=8000000000000551 phys_addr=7ce00000
-    Page(2 MiB): MR=guest_ram #104                     10 cap_addr=8000000000000552 phys_addr=7d000000
-    Page(2 MiB): MR=guest_ram #105                     10 cap_addr=8000000000000553 phys_addr=7d200000
-    Page(2 MiB): MR=guest_ram #106                     10 cap_addr=8000000000000554 phys_addr=7d400000
-    Page(2 MiB): MR=guest_ram #107                     10 cap_addr=8000000000000555 phys_addr=7d600000
-    Page(2 MiB): MR=guest_ram #108                     10 cap_addr=8000000000000556 phys_addr=7d800000
-    Page(2 MiB): MR=guest_ram #109                     10 cap_addr=8000000000000557 phys_addr=7da00000
-    Page(2 MiB): MR=guest_ram #110                     10 cap_addr=8000000000000558 phys_addr=7dc00000
-    Page(2 MiB): MR=guest_ram #111                     10 cap_addr=8000000000000559 phys_addr=7de00000
-    Page(2 MiB): MR=guest_ram #112                     10 cap_addr=800000000000055a phys_addr=7e000000
-    Page(2 MiB): MR=guest_ram #113                     10 cap_addr=800000000000055b phys_addr=7e200000
-    Page(2 MiB): MR=guest_ram #114                     10 cap_addr=800000000000055c phys_addr=7e400000
-    Page(2 MiB): MR=guest_ram #115                     10 cap_addr=800000000000055d phys_addr=7e600000
-    Page(2 MiB): MR=guest_ram #116                     10 cap_addr=800000000000055e phys_addr=7e800000
-    Page(2 MiB): MR=guest_ram #117                     10 cap_addr=800000000000055f phys_addr=7ea00000
-    Page(2 MiB): MR=guest_ram #118                     10 cap_addr=8000000000000560 phys_addr=7ec00000
-    Page(2 MiB): MR=guest_ram #119                     10 cap_addr=8000000000000561 phys_addr=7ee00000
-    Page(2 MiB): MR=guest_ram #120                     10 cap_addr=8000000000000562 phys_addr=7f000000
-    Page(2 MiB): MR=guest_ram #121                     10 cap_addr=8000000000000563 phys_addr=7f200000
-    Page(2 MiB): MR=guest_ram #122                     10 cap_addr=8000000000000564 phys_addr=7f400000
-    Page(2 MiB): MR=guest_ram #123                     10 cap_addr=8000000000000565 phys_addr=7f600000
-    Page(2 MiB): MR=guest_ram #124                     10 cap_addr=8000000000000566 phys_addr=7f800000
-    Page(2 MiB): MR=guest_ram #125                     10 cap_addr=8000000000000567 phys_addr=7fa00000
-    Page(2 MiB): MR=guest_ram #126                     10 cap_addr=8000000000000568 phys_addr=7fc00000
-    Page(2 MiB): MR=guest_ram #127                     10 cap_addr=8000000000000569 phys_addr=7fe00000
-    Page(4 KiB): IPC Buffer PD=VMM                     9 cap_addr=800000000000056a phys_addr=60002000
-    Page(4 KiB): MR=STACK:VMM #0                       9 cap_addr=800000000000056b phys_addr=60003000
-    TCB: PD=VMM                                        1 cap_addr=800000000000056c phys_addr=60004000
-    TCB: VM(VCPU-0)=solo5                              1 cap_addr=800000000000056d phys_addr=60004800
-    VCPU-0: VM=solo5                                   12 cap_addr=800000000000056e phys_addr=60005000
-    SchedContext: PD=VMM                               5 cap_addr=800000000000056f phys_addr=60006000
-    SchedContext: VM(VCPU-0)=solo5                     5 cap_addr=8000000000000570 phys_addr=60006100
-    Reply: Monitor                                     6 cap_addr=8000000000000571 phys_addr=60006200
-    Reply: PD=VMM                                      6 cap_addr=8000000000000572 phys_addr=60006220
-    EP: Monitor Fault                                  2 cap_addr=8000000000000573 phys_addr=60006240
-    EP: PD=VMM                                         2 cap_addr=8000000000000574 phys_addr=60006250
-    Notification: PD=VMM                               3 cap_addr=8000000000000575 phys_addr=60006280
-    VSpace: PD=VMM                                     8 cap_addr=8000000000000576 phys_addr=60008000
-    VSpace: VM=solo5                                   8 cap_addr=8000000000000577 phys_addr=6000a000
-    PageTable: PD=VMM VADDR=0x0                        11 cap_addr=8000000000000578 phys_addr=6000c000
-    PageTable: PD=VMM VADDR=0x40000000                 11 cap_addr=8000000000000579 phys_addr=6000d000
-    PageTable: PD=VMM VADDR=0xffc0000000               11 cap_addr=800000000000057a phys_addr=6000e000
-    PageTable: VM=solo5 VADDR=0x0                      11 cap_addr=800000000000057b phys_addr=6000f000
-    PageTable: PD=VMM VADDR=0x200000                   11 cap_addr=800000000000057c phys_addr=60738000
-    PageTable: PD=VMM VADDR=0x400000                   11 cap_addr=800000000000057d phys_addr=60739000
-    PageTable: PD=VMM VADDR=0x600000                   11 cap_addr=800000000000057e phys_addr=6073a000
-    PageTable: PD=VMM VADDR=0xffffe00000               11 cap_addr=800000000000057f phys_addr=6073b000
-    CNode: PD=VMM                                      4 cap_addr=8000000000000580 phys_addr=60760000
-    CNode: VM=solo5                                    4 cap_addr=8000000000000581 phys_addr=60764000
+    Page(4 KiB): MR=ELF:VMM-1 @ 6072d000               9 cap_addr=80000000000004ea phys_addr=6072d000
+    Page(4 KiB): MR=ELF:VMM-1 @ 6072e000               9 cap_addr=80000000000004eb phys_addr=6072e000
+    Page(4 KiB): MR=ELF:VMM-1 @ 6072f000               9 cap_addr=80000000000004ec phys_addr=6072f000
+    Page(4 KiB): MR=ELF:VMM-1 @ 60730000               9 cap_addr=80000000000004ed phys_addr=60730000
+    Page(4 KiB): MR=ELF:VMM-1 @ 60731000               9 cap_addr=80000000000004ee phys_addr=60731000
+    Page(4 KiB): MR=ELF:VMM-1 @ 60732000               9 cap_addr=80000000000004ef phys_addr=60732000
+    Page(2 MiB): MR=guest_ram #0                       10 cap_addr=80000000000004f0 phys_addr=70000000
+    Page(2 MiB): MR=guest_ram #1                       10 cap_addr=80000000000004f1 phys_addr=70200000
+    Page(2 MiB): MR=guest_ram #2                       10 cap_addr=80000000000004f2 phys_addr=70400000
+    Page(2 MiB): MR=guest_ram #3                       10 cap_addr=80000000000004f3 phys_addr=70600000
+    Page(2 MiB): MR=guest_ram #4                       10 cap_addr=80000000000004f4 phys_addr=70800000
+    Page(2 MiB): MR=guest_ram #5                       10 cap_addr=80000000000004f5 phys_addr=70a00000
+    Page(2 MiB): MR=guest_ram #6                       10 cap_addr=80000000000004f6 phys_addr=70c00000
+    Page(2 MiB): MR=guest_ram #7                       10 cap_addr=80000000000004f7 phys_addr=70e00000
+    Page(2 MiB): MR=guest_ram #8                       10 cap_addr=80000000000004f8 phys_addr=71000000
+    Page(2 MiB): MR=guest_ram #9                       10 cap_addr=80000000000004f9 phys_addr=71200000
+    Page(2 MiB): MR=guest_ram #10                      10 cap_addr=80000000000004fa phys_addr=71400000
+    Page(2 MiB): MR=guest_ram #11                      10 cap_addr=80000000000004fb phys_addr=71600000
+    Page(2 MiB): MR=guest_ram #12                      10 cap_addr=80000000000004fc phys_addr=71800000
+    Page(2 MiB): MR=guest_ram #13                      10 cap_addr=80000000000004fd phys_addr=71a00000
+    Page(2 MiB): MR=guest_ram #14                      10 cap_addr=80000000000004fe phys_addr=71c00000
+    Page(2 MiB): MR=guest_ram #15                      10 cap_addr=80000000000004ff phys_addr=71e00000
+    Page(2 MiB): MR=guest_ram #16                      10 cap_addr=8000000000000500 phys_addr=72000000
+    Page(2 MiB): MR=guest_ram #17                      10 cap_addr=8000000000000501 phys_addr=72200000
+    Page(2 MiB): MR=guest_ram #18                      10 cap_addr=8000000000000502 phys_addr=72400000
+    Page(2 MiB): MR=guest_ram #19                      10 cap_addr=8000000000000503 phys_addr=72600000
+    Page(2 MiB): MR=guest_ram #20                      10 cap_addr=8000000000000504 phys_addr=72800000
+    Page(2 MiB): MR=guest_ram #21                      10 cap_addr=8000000000000505 phys_addr=72a00000
+    Page(2 MiB): MR=guest_ram #22                      10 cap_addr=8000000000000506 phys_addr=72c00000
+    Page(2 MiB): MR=guest_ram #23                      10 cap_addr=8000000000000507 phys_addr=72e00000
+    Page(2 MiB): MR=guest_ram #24                      10 cap_addr=8000000000000508 phys_addr=73000000
+    Page(2 MiB): MR=guest_ram #25                      10 cap_addr=8000000000000509 phys_addr=73200000
+    Page(2 MiB): MR=guest_ram #26                      10 cap_addr=800000000000050a phys_addr=73400000
+    Page(2 MiB): MR=guest_ram #27                      10 cap_addr=800000000000050b phys_addr=73600000
+    Page(2 MiB): MR=guest_ram #28                      10 cap_addr=800000000000050c phys_addr=73800000
+    Page(2 MiB): MR=guest_ram #29                      10 cap_addr=800000000000050d phys_addr=73a00000
+    Page(2 MiB): MR=guest_ram #30                      10 cap_addr=800000000000050e phys_addr=73c00000
+    Page(2 MiB): MR=guest_ram #31                      10 cap_addr=800000000000050f phys_addr=73e00000
+    Page(2 MiB): MR=guest_ram #32                      10 cap_addr=8000000000000510 phys_addr=74000000
+    Page(2 MiB): MR=guest_ram #33                      10 cap_addr=8000000000000511 phys_addr=74200000
+    Page(2 MiB): MR=guest_ram #34                      10 cap_addr=8000000000000512 phys_addr=74400000
+    Page(2 MiB): MR=guest_ram #35                      10 cap_addr=8000000000000513 phys_addr=74600000
+    Page(2 MiB): MR=guest_ram #36                      10 cap_addr=8000000000000514 phys_addr=74800000
+    Page(2 MiB): MR=guest_ram #37                      10 cap_addr=8000000000000515 phys_addr=74a00000
+    Page(2 MiB): MR=guest_ram #38                      10 cap_addr=8000000000000516 phys_addr=74c00000
+    Page(2 MiB): MR=guest_ram #39                      10 cap_addr=8000000000000517 phys_addr=74e00000
+    Page(2 MiB): MR=guest_ram #40                      10 cap_addr=8000000000000518 phys_addr=75000000
+    Page(2 MiB): MR=guest_ram #41                      10 cap_addr=8000000000000519 phys_addr=75200000
+    Page(2 MiB): MR=guest_ram #42                      10 cap_addr=800000000000051a phys_addr=75400000
+    Page(2 MiB): MR=guest_ram #43                      10 cap_addr=800000000000051b phys_addr=75600000
+    Page(2 MiB): MR=guest_ram #44                      10 cap_addr=800000000000051c phys_addr=75800000
+    Page(2 MiB): MR=guest_ram #45                      10 cap_addr=800000000000051d phys_addr=75a00000
+    Page(2 MiB): MR=guest_ram #46                      10 cap_addr=800000000000051e phys_addr=75c00000
+    Page(2 MiB): MR=guest_ram #47                      10 cap_addr=800000000000051f phys_addr=75e00000
+    Page(2 MiB): MR=guest_ram #48                      10 cap_addr=8000000000000520 phys_addr=76000000
+    Page(2 MiB): MR=guest_ram #49                      10 cap_addr=8000000000000521 phys_addr=76200000
+    Page(2 MiB): MR=guest_ram #50                      10 cap_addr=8000000000000522 phys_addr=76400000
+    Page(2 MiB): MR=guest_ram #51                      10 cap_addr=8000000000000523 phys_addr=76600000
+    Page(2 MiB): MR=guest_ram #52                      10 cap_addr=8000000000000524 phys_addr=76800000
+    Page(2 MiB): MR=guest_ram #53                      10 cap_addr=8000000000000525 phys_addr=76a00000
+    Page(2 MiB): MR=guest_ram #54                      10 cap_addr=8000000000000526 phys_addr=76c00000
+    Page(2 MiB): MR=guest_ram #55                      10 cap_addr=8000000000000527 phys_addr=76e00000
+    Page(2 MiB): MR=guest_ram #56                      10 cap_addr=8000000000000528 phys_addr=77000000
+    Page(2 MiB): MR=guest_ram #57                      10 cap_addr=8000000000000529 phys_addr=77200000
+    Page(2 MiB): MR=guest_ram #58                      10 cap_addr=800000000000052a phys_addr=77400000
+    Page(2 MiB): MR=guest_ram #59                      10 cap_addr=800000000000052b phys_addr=77600000
+    Page(2 MiB): MR=guest_ram #60                      10 cap_addr=800000000000052c phys_addr=77800000
+    Page(2 MiB): MR=guest_ram #61                      10 cap_addr=800000000000052d phys_addr=77a00000
+    Page(2 MiB): MR=guest_ram #62                      10 cap_addr=800000000000052e phys_addr=77c00000
+    Page(2 MiB): MR=guest_ram #63                      10 cap_addr=800000000000052f phys_addr=77e00000
+    Page(2 MiB): MR=guest_ram #64                      10 cap_addr=8000000000000530 phys_addr=78000000
+    Page(2 MiB): MR=guest_ram #65                      10 cap_addr=8000000000000531 phys_addr=78200000
+    Page(2 MiB): MR=guest_ram #66                      10 cap_addr=8000000000000532 phys_addr=78400000
+    Page(2 MiB): MR=guest_ram #67                      10 cap_addr=8000000000000533 phys_addr=78600000
+    Page(2 MiB): MR=guest_ram #68                      10 cap_addr=8000000000000534 phys_addr=78800000
+    Page(2 MiB): MR=guest_ram #69                      10 cap_addr=8000000000000535 phys_addr=78a00000
+    Page(2 MiB): MR=guest_ram #70                      10 cap_addr=8000000000000536 phys_addr=78c00000
+    Page(2 MiB): MR=guest_ram #71                      10 cap_addr=8000000000000537 phys_addr=78e00000
+    Page(2 MiB): MR=guest_ram #72                      10 cap_addr=8000000000000538 phys_addr=79000000
+    Page(2 MiB): MR=guest_ram #73                      10 cap_addr=8000000000000539 phys_addr=79200000
+    Page(2 MiB): MR=guest_ram #74                      10 cap_addr=800000000000053a phys_addr=79400000
+    Page(2 MiB): MR=guest_ram #75                      10 cap_addr=800000000000053b phys_addr=79600000
+    Page(2 MiB): MR=guest_ram #76                      10 cap_addr=800000000000053c phys_addr=79800000
+    Page(2 MiB): MR=guest_ram #77                      10 cap_addr=800000000000053d phys_addr=79a00000
+    Page(2 MiB): MR=guest_ram #78                      10 cap_addr=800000000000053e phys_addr=79c00000
+    Page(2 MiB): MR=guest_ram #79                      10 cap_addr=800000000000053f phys_addr=79e00000
+    Page(2 MiB): MR=guest_ram #80                      10 cap_addr=8000000000000540 phys_addr=7a000000
+    Page(2 MiB): MR=guest_ram #81                      10 cap_addr=8000000000000541 phys_addr=7a200000
+    Page(2 MiB): MR=guest_ram #82                      10 cap_addr=8000000000000542 phys_addr=7a400000
+    Page(2 MiB): MR=guest_ram #83                      10 cap_addr=8000000000000543 phys_addr=7a600000
+    Page(2 MiB): MR=guest_ram #84                      10 cap_addr=8000000000000544 phys_addr=7a800000
+    Page(2 MiB): MR=guest_ram #85                      10 cap_addr=8000000000000545 phys_addr=7aa00000
+    Page(2 MiB): MR=guest_ram #86                      10 cap_addr=8000000000000546 phys_addr=7ac00000
+    Page(2 MiB): MR=guest_ram #87                      10 cap_addr=8000000000000547 phys_addr=7ae00000
+    Page(2 MiB): MR=guest_ram #88                      10 cap_addr=8000000000000548 phys_addr=7b000000
+    Page(2 MiB): MR=guest_ram #89                      10 cap_addr=8000000000000549 phys_addr=7b200000
+    Page(2 MiB): MR=guest_ram #90                      10 cap_addr=800000000000054a phys_addr=7b400000
+    Page(2 MiB): MR=guest_ram #91                      10 cap_addr=800000000000054b phys_addr=7b600000
+    Page(2 MiB): MR=guest_ram #92                      10 cap_addr=800000000000054c phys_addr=7b800000
+    Page(2 MiB): MR=guest_ram #93                      10 cap_addr=800000000000054d phys_addr=7ba00000
+    Page(2 MiB): MR=guest_ram #94                      10 cap_addr=800000000000054e phys_addr=7bc00000
+    Page(2 MiB): MR=guest_ram #95                      10 cap_addr=800000000000054f phys_addr=7be00000
+    Page(2 MiB): MR=guest_ram #96                      10 cap_addr=8000000000000550 phys_addr=7c000000
+    Page(2 MiB): MR=guest_ram #97                      10 cap_addr=8000000000000551 phys_addr=7c200000
+    Page(2 MiB): MR=guest_ram #98                      10 cap_addr=8000000000000552 phys_addr=7c400000
+    Page(2 MiB): MR=guest_ram #99                      10 cap_addr=8000000000000553 phys_addr=7c600000
+    Page(2 MiB): MR=guest_ram #100                     10 cap_addr=8000000000000554 phys_addr=7c800000
+    Page(2 MiB): MR=guest_ram #101                     10 cap_addr=8000000000000555 phys_addr=7ca00000
+    Page(2 MiB): MR=guest_ram #102                     10 cap_addr=8000000000000556 phys_addr=7cc00000
+    Page(2 MiB): MR=guest_ram #103                     10 cap_addr=8000000000000557 phys_addr=7ce00000
+    Page(2 MiB): MR=guest_ram #104                     10 cap_addr=8000000000000558 phys_addr=7d000000
+    Page(2 MiB): MR=guest_ram #105                     10 cap_addr=8000000000000559 phys_addr=7d200000
+    Page(2 MiB): MR=guest_ram #106                     10 cap_addr=800000000000055a phys_addr=7d400000
+    Page(2 MiB): MR=guest_ram #107                     10 cap_addr=800000000000055b phys_addr=7d600000
+    Page(2 MiB): MR=guest_ram #108                     10 cap_addr=800000000000055c phys_addr=7d800000
+    Page(2 MiB): MR=guest_ram #109                     10 cap_addr=800000000000055d phys_addr=7da00000
+    Page(2 MiB): MR=guest_ram #110                     10 cap_addr=800000000000055e phys_addr=7dc00000
+    Page(2 MiB): MR=guest_ram #111                     10 cap_addr=800000000000055f phys_addr=7de00000
+    Page(2 MiB): MR=guest_ram #112                     10 cap_addr=8000000000000560 phys_addr=7e000000
+    Page(2 MiB): MR=guest_ram #113                     10 cap_addr=8000000000000561 phys_addr=7e200000
+    Page(2 MiB): MR=guest_ram #114                     10 cap_addr=8000000000000562 phys_addr=7e400000
+    Page(2 MiB): MR=guest_ram #115                     10 cap_addr=8000000000000563 phys_addr=7e600000
+    Page(2 MiB): MR=guest_ram #116                     10 cap_addr=8000000000000564 phys_addr=7e800000
+    Page(2 MiB): MR=guest_ram #117                     10 cap_addr=8000000000000565 phys_addr=7ea00000
+    Page(2 MiB): MR=guest_ram #118                     10 cap_addr=8000000000000566 phys_addr=7ec00000
+    Page(2 MiB): MR=guest_ram #119                     10 cap_addr=8000000000000567 phys_addr=7ee00000
+    Page(2 MiB): MR=guest_ram #120                     10 cap_addr=8000000000000568 phys_addr=7f000000
+    Page(2 MiB): MR=guest_ram #121                     10 cap_addr=8000000000000569 phys_addr=7f200000
+    Page(2 MiB): MR=guest_ram #122                     10 cap_addr=800000000000056a phys_addr=7f400000
+    Page(2 MiB): MR=guest_ram #123                     10 cap_addr=800000000000056b phys_addr=7f600000
+    Page(2 MiB): MR=guest_ram #124                     10 cap_addr=800000000000056c phys_addr=7f800000
+    Page(2 MiB): MR=guest_ram #125                     10 cap_addr=800000000000056d phys_addr=7fa00000
+    Page(2 MiB): MR=guest_ram #126                     10 cap_addr=800000000000056e phys_addr=7fc00000
+    Page(2 MiB): MR=guest_ram #127                     10 cap_addr=800000000000056f phys_addr=7fe00000
+    Page(4 KiB): IPC Buffer PD=VMM                     9 cap_addr=8000000000000570 phys_addr=60002000
+    Page(4 KiB): MR=STACK:VMM #0                       9 cap_addr=8000000000000571 phys_addr=60003000
+    TCB: PD=VMM                                        1 cap_addr=8000000000000572 phys_addr=60004000
+    TCB: VM(VCPU-0)=solo5                              1 cap_addr=8000000000000573 phys_addr=60004800
+    VCPU-0: VM=solo5                                   12 cap_addr=8000000000000574 phys_addr=60005000
+    SchedContext: PD=VMM                               5 cap_addr=8000000000000575 phys_addr=60006000
+    SchedContext: VM(VCPU-0)=solo5                     5 cap_addr=8000000000000576 phys_addr=60006100
+    Reply: Monitor                                     6 cap_addr=8000000000000577 phys_addr=60006200
+    Reply: PD=VMM                                      6 cap_addr=8000000000000578 phys_addr=60006220
+    EP: Monitor Fault                                  2 cap_addr=8000000000000579 phys_addr=60006240
+    EP: PD=VMM                                         2 cap_addr=800000000000057a phys_addr=60006250
+    Notification: PD=VMM                               3 cap_addr=800000000000057b phys_addr=60006280
+    VSpace: PD=VMM                                     8 cap_addr=800000000000057c phys_addr=60008000
+    VSpace: VM=solo5                                   8 cap_addr=800000000000057d phys_addr=6000a000
+    PageTable: PD=VMM VADDR=0x0                        11 cap_addr=800000000000057e phys_addr=6000c000
+    PageTable: PD=VMM VADDR=0x40000000                 11 cap_addr=800000000000057f phys_addr=6000d000
+    PageTable: PD=VMM VADDR=0xffc0000000               11 cap_addr=8000000000000580 phys_addr=6000e000
+    PageTable: VM=solo5 VADDR=0x0                      11 cap_addr=8000000000000581 phys_addr=6000f000
+    PageTable: PD=VMM VADDR=0x200000                   11 cap_addr=8000000000000582 phys_addr=60760000
+    PageTable: PD=VMM VADDR=0x400000                   11 cap_addr=8000000000000583 phys_addr=60761000
+    PageTable: PD=VMM VADDR=0x600000                   11 cap_addr=8000000000000584 phys_addr=60762000
+    PageTable: PD=VMM VADDR=0xffffe00000               11 cap_addr=8000000000000585 phys_addr=60763000
+    CNode: PD=VMM                                      4 cap_addr=8000000000000586 phys_addr=60764000
+    CNode: VM=solo5                                    4 cap_addr=8000000000000587 phys_addr=60768000
 
 # Bootstrap Kernel Invocations Detail
 
@@ -11271,7 +11277,7 @@
          node_depth           1
          node_offset          1244
          num_objects          1
-    0x04c5 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04c5 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11279,7 +11285,7 @@
          node_depth           1
          node_offset          1245
          num_objects          1
-    0x04c6 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04c6 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11287,7 +11293,7 @@
          node_depth           1
          node_offset          1246
          num_objects          1
-    0x04c7 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04c7 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11295,7 +11301,7 @@
          node_depth           1
          node_offset          1247
          num_objects          1
-    0x04c8 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04c8 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11303,7 +11309,7 @@
          node_depth           1
          node_offset          1248
          num_objects          1
-    0x04c9 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04c9 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11311,7 +11317,7 @@
          node_depth           1
          node_offset          1249
          num_objects          1
-    0x04ca Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04ca Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11319,7 +11325,7 @@
          node_depth           1
          node_offset          1250
          num_objects          1
-    0x04cb Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04cb Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11327,7 +11333,7 @@
          node_depth           1
          node_offset          1251
          num_objects          1
-    0x04cc Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x8000 (device))
+    0x04cc Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11335,7 +11341,7 @@
          node_depth           1
          node_offset          1252
          num_objects          1
-    0x04cd Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60728000:0x4000 (device))
+    0x04cd Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11343,7 +11349,7 @@
          node_depth           1
          node_offset          1253
          num_objects          1
-    0x04ce Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60728000:0x4000 (device))
+    0x04ce Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11351,7 +11357,7 @@
          node_depth           1
          node_offset          1254
          num_objects          1
-    0x04cf Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60728000:0x4000 (device))
+    0x04cf Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11359,7 +11365,7 @@
          node_depth           1
          node_offset          1255
          num_objects          1
-    0x04d0 Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60728000:0x4000 (device))
+    0x04d0 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11367,7 +11373,7 @@
          node_depth           1
          node_offset          1256
          num_objects          1
-    0x04d1 Untyped              - Retype            - 0x0000000000000028 (Untyped @ 0x6072c000:0x1000 (device))
+    0x04d1 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
@@ -11375,124 +11381,172 @@
          node_depth           1
          node_offset          1257
          num_objects          1
-    0x04d2 Untyped              - Retype            - 0x0000000000000056 (Untyped @ 0x70000000:0x10000000)
-         object_type          10 (SEL4_LARGE_PAGE_OBJECT - 0x200000)
-         size_bits            0 (N/A)
-         root (cap)           0x0000000000000069 (CNode: root)
-         node_index           1
-         node_depth           1
-         node_offset          1258
-         num_objects          128
-    0x04d3 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04d2 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
          object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1386
+         node_offset          1258
+         num_objects          1
+    0x04d3 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1259
+         num_objects          1
+    0x04d4 Untyped              - Retype            - 0x0000000000000026 (Untyped @ 0x60720000:0x10000 (device))
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1260
+         num_objects          1
+    0x04d5 Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60730000:0x2000 (device))
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1261
+         num_objects          1
+    0x04d6 Untyped              - Retype            - 0x0000000000000027 (Untyped @ 0x60730000:0x2000 (device))
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1262
+         num_objects          1
+    0x04d7 Untyped              - Retype            - 0x0000000000000028 (Untyped @ 0x60732000:0x1000 (device))
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1263
+         num_objects          1
+    0x04d8 Untyped              - Retype            - 0x0000000000000056 (Untyped @ 0x70000000:0x10000000)
+         object_type          10 (SEL4_LARGE_PAGE_OBJECT - 0x200000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1264
+         num_objects          128
+    0x04d9 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+         object_type          9 (SEL4_SMALL_PAGE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1392
          num_objects          2
-    0x04d4 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04da Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          1 (SEL4_TCB_OBJECT - 0x800)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1388
+         node_offset          1394
          num_objects          2
-    0x04d5 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04db Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          12 (SEL4_VCPU_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1390
+         node_offset          1396
          num_objects          1
-    0x04d6 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04dc Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          5 (SEL4_SCHEDCONTEXT_OBJECT - variable size)
          size_bits            8 (0x100)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1391
+         node_offset          1397
          num_objects          2
-    0x04d7 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04dd Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          6 (SEL4_REPLY_OBJECT - 0x20)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1393
+         node_offset          1399
          num_objects          2
-    0x04d8 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04de Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          2 (SEL4_ENDPOINT_OBJECT - 0x10)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1395
+         node_offset          1401
          num_objects          2
-    0x04d9 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+    0x04df Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
          object_type          3 (SEL4_NOTIFICATION_OBJECT - 0x40)
-         size_bits            0 (N/A)
-         root (cap)           0x0000000000000069 (CNode: root)
-         node_index           1
-         node_depth           1
-         node_offset          1397
-         num_objects          1
-    0x04da Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
-         object_type          8 (SEL4_VSPACE_OBJECT - 0x2000)
-         size_bits            0 (N/A)
-         root (cap)           0x0000000000000069 (CNode: root)
-         node_index           1
-         node_depth           1
-         node_offset          1398
-         num_objects          2
-    0x04db Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
-         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
-         size_bits            0 (N/A)
-         root (cap)           0x0000000000000069 (CNode: root)
-         node_index           1
-         node_depth           1
-         node_offset          1400
-         num_objects          3
-    0x04dc Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
-         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
          node_offset          1403
          num_objects          1
-    0x04dd Untyped              - Retype            - 0x000000000000004e (Untyped @ 0x60738000:0x8000)
-         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
+    0x04e0 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+         object_type          8 (SEL4_VSPACE_OBJECT - 0x2000)
          size_bits            0 (N/A)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
          node_offset          1404
+         num_objects          2
+    0x04e1 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1406
+         num_objects          3
+    0x04e2 Untyped              - Retype            - 0x000000000000004c (Untyped @ 0x60000000:0x10000)
+         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1409
+         num_objects          1
+    0x04e3 Untyped              - Retype            - 0x000000000000004f (Untyped @ 0x60740000:0x40000)
+         object_type          11 (SEL4_PAGE_TABLE_OBJECT - 0x1000)
+         size_bits            0 (N/A)
+         root (cap)           0x0000000000000069 (CNode: root)
+         node_index           1
+         node_depth           1
+         node_offset          1410
          num_objects          4
-    0x04de Untyped              - Retype            - 0x000000000000004f (Untyped @ 0x60740000:0x40000)
+    0x04e4 Untyped              - Retype            - 0x000000000000004f (Untyped @ 0x60740000:0x40000)
          object_type          4 (SEL4_CNODE_OBJECT - variable size)
          size_bits            9 (0x200)
          root (cap)           0x0000000000000069 (CNode: root)
          node_index           1
          node_depth           1
-         node_offset          1408
+         node_offset          1414
          num_objects          2
-    0x04df ASID Pool            - Assign            - 0x0000000000000006 (ASID Pool: init)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04e5 ASID Pool            - Assign            - 0x0000000000000006 (ASID Pool: init)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
       REPEAT: count=2
-    0x04e0 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           1410
+    0x04e6 CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           1416
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x80000000000004ea (Page(2 MiB): MR=guest_ram #0)
+         src_obj (cap)        0x80000000000004f0 (Page(2 MiB): MR=guest_ram #0)
          src_depth            64
          rights               3
          badge                0
       REPEAT: count=128
-    0x04e1 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           1538
+    0x04e7 CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           1544
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
          src_obj (cap)        0x8000000000000018 (Page(4 KiB): MR=ELF:VMM-0 @ 6025b000)
@@ -11500,197 +11554,197 @@
          rights               2
          badge                0
       REPEAT: count=8
-    0x04e2 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           1546
+    0x04e8 CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           1552
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
          src_obj (cap)        0x8000000000000020 (Page(4 KiB): MR=ELF:VMM-1 @ 60263000)
          src_depth            64
          rights               3
          badge                0
-      REPEAT: count=1226
-    0x04e3 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           2772
+      REPEAT: count=1232
+    0x04e9 CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           2784
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x800000000000056b (Page(4 KiB): MR=STACK:VMM #0)
+         src_obj (cap)        0x8000000000000571 (Page(4 KiB): MR=STACK:VMM #0)
          src_depth            64
          rights               3
          badge                0
-    0x04e4 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           2773
+    0x04ea CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           2785
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x80000000000004ea (Page(2 MiB): MR=guest_ram #0)
+         src_obj (cap)        0x80000000000004f0 (Page(2 MiB): MR=guest_ram #0)
          src_depth            64
          rights               3
          badge                0
       REPEAT: count=128
-    0x04e5 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           2901
+    0x04eb CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           2913
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x8000000000000573 (EP: Monitor Fault)
+         src_obj (cap)        0x8000000000000579 (EP: Monitor Fault)
          src_depth            64
          rights               15
          badge                1
-    0x04e6 CNode                - Mint              - 0x000000000000006a (CNode: system)
-         dest_index           2902
+    0x04ec CNode                - Mint              - 0x000000000000006a (CNode: system)
+         dest_index           2914
          dest_depth           12
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x8000000000000574 (EP: PD=VMM)
+         src_obj (cap)        0x800000000000057a (EP: PD=VMM)
          src_depth            64
          rights               15
          badge                4611686018427387904
-    0x04e7 CNode                - Mint              - 0x8000000000000580 (CNode: PD=VMM)
+    0x04ed CNode                - Mint              - 0x8000000000000586 (CNode: PD=VMM)
          dest_index           1
          dest_depth           9
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x8000000000000574 (EP: PD=VMM)
+         src_obj (cap)        0x800000000000057a (EP: PD=VMM)
          src_depth            64
          rights               15
          badge                0
-    0x04e8 CNode                - Mint              - 0x8000000000000580 (CNode: PD=VMM)
+    0x04ee CNode                - Mint              - 0x8000000000000586 (CNode: PD=VMM)
          dest_index           4
          dest_depth           9
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x8000000000000572 (Reply: PD=VMM)
+         src_obj (cap)        0x8000000000000578 (Reply: PD=VMM)
          src_depth            64
          rights               15
          badge                1
-    0x04e9 CNode                - Mint              - 0x8000000000000580 (CNode: PD=VMM)
+    0x04ef CNode                - Mint              - 0x8000000000000586 (CNode: PD=VMM)
          dest_index           3
          dest_depth           9
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x8000000000000576 (VSpace: PD=VMM)
+         src_obj (cap)        0x800000000000057c (VSpace: PD=VMM)
          src_depth            64
          rights               15
          badge                0
       REPEAT: count=2
-    0x04ea CNode                - Mint              - 0x8000000000000580 (CNode: PD=VMM)
+    0x04f0 CNode                - Mint              - 0x8000000000000586 (CNode: PD=VMM)
          dest_index           266
          dest_depth           9
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x800000000000056d (TCB: VM(VCPU-0)=solo5)
+         src_obj (cap)        0x8000000000000573 (TCB: VM(VCPU-0)=solo5)
          src_depth            64
          rights               15
          badge                0
-    0x04eb CNode                - Mint              - 0x8000000000000580 (CNode: PD=VMM)
+    0x04f1 CNode                - Mint              - 0x8000000000000586 (CNode: PD=VMM)
          dest_index           330
          dest_depth           9
          src_root (cap)       0x0000000000000069 (CNode: root)
-         src_obj (cap)        0x800000000000056e (VCPU-0: VM=solo5)
+         src_obj (cap)        0x8000000000000574 (VCPU-0: VM=solo5)
          src_depth            64
          rights               15
          badge                0
-    0x04ec Page Table           - Map               - 0x8000000000000578 (PageTable: PD=VMM VADDR=0x0)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f2 Page Table           - Map               - 0x800000000000057e (PageTable: PD=VMM VADDR=0x0)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x0
          attr                 3
-    0x04ed Page Table           - Map               - 0x8000000000000579 (PageTable: PD=VMM VADDR=0x40000000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f3 Page Table           - Map               - 0x800000000000057f (PageTable: PD=VMM VADDR=0x40000000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x40000000
          attr                 3
-    0x04ee Page Table           - Map               - 0x800000000000057a (PageTable: PD=VMM VADDR=0xffc0000000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f4 Page Table           - Map               - 0x8000000000000580 (PageTable: PD=VMM VADDR=0xffc0000000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0xffc0000000
          attr                 3
-    0x04ef Page Table           - Map               - 0x800000000000057c (PageTable: PD=VMM VADDR=0x200000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f5 Page Table           - Map               - 0x8000000000000582 (PageTable: PD=VMM VADDR=0x200000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x200000
          attr                 3
-    0x04f0 Page Table           - Map               - 0x800000000000057d (PageTable: PD=VMM VADDR=0x400000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f6 Page Table           - Map               - 0x8000000000000583 (PageTable: PD=VMM VADDR=0x400000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x400000
          attr                 3
-    0x04f1 Page Table           - Map               - 0x800000000000057e (PageTable: PD=VMM VADDR=0x600000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f7 Page Table           - Map               - 0x8000000000000584 (PageTable: PD=VMM VADDR=0x600000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x600000
          attr                 3
-    0x04f2 Page Table           - Map               - 0x800000000000057f (PageTable: PD=VMM VADDR=0xffffe00000)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04f8 Page Table           - Map               - 0x8000000000000585 (PageTable: PD=VMM VADDR=0xffffe00000)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0xffffe00000
          attr                 3
-    0x04f3 Page Table           - Map               - 0x800000000000057b (PageTable: VM=solo5 VADDR=0x0)
-         vspace (cap)         0x8000000000000577 (VSpace: VM=solo5)
+    0x04f9 Page Table           - Map               - 0x8000000000000581 (PageTable: VM=solo5 VADDR=0x0)
+         vspace (cap)         0x800000000000057d (VSpace: VM=solo5)
          vaddr                0x0
          attr                 3
-    0x04f4 Page                 - Map               - 0x8000000000000582 (Page(2 MiB): MR=guest_ram #0 (derived))
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04fa Page                 - Map               - 0x8000000000000588 (Page(2 MiB): MR=guest_ram #0 (derived))
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x40000000
          rights               3
          attr                 6
       REPEAT: count=128
-    0x04f5 Page                 - Map               - 0x8000000000000602 (Page(4 KiB): MR=ELF:VMM-0 @ 6025b000 (derived))
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04fb Page                 - Map               - 0x8000000000000608 (Page(4 KiB): MR=ELF:VMM-0 @ 6025b000 (derived))
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x200000
          rights               2
          attr                 3
       REPEAT: count=8
-    0x04f6 Page                 - Map               - 0x800000000000060a (Page(4 KiB): MR=ELF:VMM-1 @ 60263000 (derived))
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+    0x04fc Page                 - Map               - 0x8000000000000610 (Page(4 KiB): MR=ELF:VMM-1 @ 60263000 (derived))
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0x208000
          rights               3
          attr                 7
-      REPEAT: count=1226
-    0x04f7 Page                 - Map               - 0x8000000000000ad4 (Page(4 KiB): MR=STACK:VMM #0 (derived))
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
+      REPEAT: count=1232
+    0x04fd Page                 - Map               - 0x8000000000000ae0 (Page(4 KiB): MR=STACK:VMM #0 (derived))
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
          vaddr                0xfffffff000
          rights               3
          attr                 7
-    0x04f8 Page                 - Map               - 0x8000000000000ad5 (Page(2 MiB): MR=guest_ram #0 (derived))
-         vspace (cap)         0x8000000000000577 (VSpace: VM=solo5)
+    0x04fe Page                 - Map               - 0x8000000000000ae1 (Page(2 MiB): MR=guest_ram #0 (derived))
+         vspace (cap)         0x800000000000057d (VSpace: VM=solo5)
          vaddr                0x0
          rights               3
          attr                 3
       REPEAT: count=128
-    0x04f9 Page                 - Map               - 0x800000000000056a (Page(4 KiB): IPC Buffer PD=VMM)
-         vspace (cap)         0x8000000000000576 (VSpace: PD=VMM)
-         vaddr                0x6d2000
+    0x04ff Page                 - Map               - 0x8000000000000570 (Page(4 KiB): IPC Buffer PD=VMM)
+         vspace (cap)         0x800000000000057c (VSpace: PD=VMM)
+         vaddr                0x6d8000
          rights               3
          attr                 7
-    0x04fa SchedControl         - ConfigureFlags    - 0x0000000000000012 (None)
-         schedcontext (cap)   0x800000000000056f (SchedContext: PD=VMM)
+    0x0500 SchedControl         - ConfigureFlags    - 0x0000000000000012 (None)
+         schedcontext (cap)   0x8000000000000575 (SchedContext: PD=VMM)
          budget               1000
          period               1000
          extra_refills        0
          badge                256
          flags                0
-    0x04fb SchedControl         - ConfigureFlags    - 0x0000000000000012 (None)
-         schedcontext (cap)   0x8000000000000570 (SchedContext: VM(VCPU-0)=solo5)
+    0x0501 SchedControl         - ConfigureFlags    - 0x0000000000000012 (None)
+         schedcontext (cap)   0x8000000000000576 (SchedContext: VM(VCPU-0)=solo5)
          budget               1000
          period               1000
          extra_refills        0
          badge                256
          flags                0
-    0x04fc TCB                  - SetSchedParams    - 0x800000000000056c (TCB: PD=VMM)
+    0x0502 TCB                  - SetSchedParams    - 0x8000000000000572 (TCB: PD=VMM)
          authority (cap)      0x0000000000000001 (TCB: init)
          mcp                  254
          priority             254
-         sched_context (cap)  0x800000000000056f (SchedContext: PD=VMM)
-         fault_ep (cap)       0x8000000000000573 (EP: Monitor Fault)
-    0x04fd TCB                  - SetSchedParams    - 0x800000000000056d (TCB: VM(VCPU-0)=solo5)
+         sched_context (cap)  0x8000000000000575 (SchedContext: PD=VMM)
+         fault_ep (cap)       0x8000000000000579 (EP: Monitor Fault)
+    0x0503 TCB                  - SetSchedParams    - 0x8000000000000573 (TCB: VM(VCPU-0)=solo5)
          authority (cap)      0x0000000000000001 (TCB: init)
          mcp                  0
          priority             0
-         sched_context (cap)  0x8000000000000570 (SchedContext: VM(VCPU-0)=solo5)
-         fault_ep (cap)       0x8000000000000573 (EP: Monitor Fault)
-    0x04fe TCB                  - SetSpace          - 0x800000000000056c (TCB: PD=VMM)
-         fault_ep (cap)       0x8000000000000b55 (None)
-         cspace_root (cap)    0x8000000000000580 (CNode: PD=VMM)
+         sched_context (cap)  0x8000000000000576 (SchedContext: VM(VCPU-0)=solo5)
+         fault_ep (cap)       0x8000000000000579 (EP: Monitor Fault)
+    0x0504 TCB                  - SetSpace          - 0x8000000000000572 (TCB: PD=VMM)
+         fault_ep (cap)       0x8000000000000b61 (None)
+         cspace_root (cap)    0x8000000000000586 (CNode: PD=VMM)
          cspace_root_data     55
-         vspace_root (cap)    0x8000000000000576 (VSpace: PD=VMM)
+         vspace_root (cap)    0x800000000000057c (VSpace: PD=VMM)
          vspace_root_data     0
-    0x04ff TCB                  - SetSpace          - 0x800000000000056d (TCB: VM(VCPU-0)=solo5)
-         fault_ep (cap)       0x8000000000000b56 (None)
-         cspace_root (cap)    0x8000000000000581 (CNode: VM=solo5)
+    0x0505 TCB                  - SetSpace          - 0x8000000000000573 (TCB: VM(VCPU-0)=solo5)
+         fault_ep (cap)       0x8000000000000b62 (None)
+         cspace_root (cap)    0x8000000000000587 (CNode: VM=solo5)
          cspace_root_data     55
-         vspace_root (cap)    0x8000000000000577 (VSpace: VM=solo5)
+         vspace_root (cap)    0x800000000000057d (VSpace: VM=solo5)
          vspace_root_data     0
-    0x0500 TCB                  - SetIPCBuffer      - 0x800000000000056c (TCB: PD=VMM)
-         buffer               0x6d2000
-         buffer_frame (cap)   0x800000000000056a (Page(4 KiB): IPC Buffer PD=VMM)
-    0x0501 TCB                  - WriteRegisters    - 0x800000000000056c (TCB: PD=VMM)
+    0x0506 TCB                  - SetIPCBuffer      - 0x8000000000000572 (TCB: PD=VMM)
+         buffer               0x6d8000
+         buffer_frame (cap)   0x8000000000000570 (Page(4 KiB): IPC Buffer PD=VMM)
+    0x0507 TCB                  - WriteRegisters    - 0x8000000000000572 (TCB: PD=VMM)
          resume               false
          arch_flags           0
          regs                 pc: 0x0000000000200000
@@ -11729,9 +11783,9 @@
                               x28: 0x0000000000000000
                               tpidr_el0: 0x0000000000000000
                               tpidrro_el0: 0x0000000000000000
-    0x0502 TCB                  - BindNotification  - 0x800000000000056c (TCB: PD=VMM)
-         notification (cap)   0x8000000000000575 (Notification: PD=VMM)
-    0x0503 VCPU                 - VCPUSetTcb        - 0x800000000000056e (VCPU-0: VM=solo5)
-         tcb (cap)            0x800000000000056d (TCB: VM(VCPU-0)=solo5)
-    0x0504 TCB                  - Resume            - 0x800000000000056c (TCB: PD=VMM)
+    0x0508 TCB                  - BindNotification  - 0x8000000000000572 (TCB: PD=VMM)
+         notification (cap)   0x800000000000057b (Notification: PD=VMM)
+    0x0509 VCPU                 - VCPUSetTcb        - 0x8000000000000574 (VCPU-0: VM=solo5)
+         tcb (cap)            0x8000000000000573 (TCB: VM(VCPU-0)=solo5)
+    0x050a TCB                  - Resume            - 0x8000000000000572 (TCB: PD=VMM)
 

@@ -31,6 +31,10 @@ INC_DIR := $(abspath ./include)
 SRC_DIR := $(abspath ./src)
 SYSTEM := $(RESOURCES)/minimal.system
 
+ifeq ($(strip $(GUEST_FILE)),)
+GUEST_FILE := hello.hvt
+endif
+
 export BUILD_DIR
 export MICROKIT_SDK
 export MICROKIT_BOARD
@@ -44,6 +48,7 @@ export SRC_DIR
 export DEPS
 export RESOURCES
 export SYSTEM
+export GUEST_FILE
 
 all: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
 
@@ -55,13 +60,19 @@ ${BUILD_DIR}/Makefile: $(BUILD_MAKE)
 	mkdir -p ${BUILD_DIR}
 	cp $(BUILD_MAKE) $@
 
+# Only allow qemu when built for virt_arch
+ifeq ($(strip $(MICROKIT_BOARD)), qemu_virt_aarch64)
 qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
-	qemu-system-$(ARCH) -machine virt,virtualization=on,highmem=off,secure=off \
+	qemu-system-aarch64 -machine virt,virtualization=on,highmem=off,secure=off \
 				-cpu cortex-a53 \
 				-serial mon:stdio \
 				-device loader,file=$(BUILD_DIR)/$(IMAGE_FILE),addr=0x70000000,cpu-num=0 \
 				-m size=2G \
 				-nographic
+else
+qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+	echo "QEMU not supported for $(MICROKIT_BOARD) (skipping simulation)"
+endif 
 
 # Used to always force rule to run
 FORCE:
