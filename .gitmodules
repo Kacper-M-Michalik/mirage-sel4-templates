@@ -1,0 +1,6 @@
+[submodule "minimal/deps/solo5libvmm"]
+	path = minimal/deps/solo5libvmm
+	url = git@github.com:Kacper-M-Michalik/solo5libvmm.git
+[submodule "minimal/deps/sddf"]
+	path = minimal/deps/sddf
+	url = git@github.com:au-ts/sddf.git
