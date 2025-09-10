@@ -16,8 +16,10 @@ size_t guest_ram_size;
 
 void init(void)
 {
-    printf("Guest Memory Address: %zu\n", guest_ram_vaddr);
+    printf("Guest memory addr: %zu\n", guest_ram_vaddr);
+    printf("Guest image addr: %ld\n", _binary_guest_start);
     printf("Guest image size linked: %ld\n", _binary_guest_size);
+    printf("Starting bootup\n");
 
     char cmdline[] = "";
 
@@ -37,8 +39,7 @@ void notified(microkit_channel ch)
 
 seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo *reply_msginfo) 
 {    
-    seL4_Bool success = fault_handle(child, msginfo);
-    
+    seL4_Bool success = fault_handle(child, msginfo, guest_ram_vaddr);
     //hvt_hypercall hc_id;
     //void* hc_data;
     //if (!fault_handle(child, msginfo, &hc_id, &hc_data)) return seL4_False;

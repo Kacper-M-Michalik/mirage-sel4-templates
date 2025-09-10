@@ -8,17 +8,14 @@
 
     <protection_domain name="VMM" priority="254">
         <program_image path="vmm.elf"/>
-        <!--
-            Leaving caching off for now, not sure if we can enable it?
-        -->
-        <map mr="guest_ram" vaddr="0x40000000" perms="rw" setvar_vaddr="guest_ram_vaddr" setvar_size="guest_ram_size" cached="false"/>
+        <map mr="guest_ram" vaddr="0x20000000" perms="rw" setvar_vaddr="guest_ram_vaddr" setvar_size="guest_ram_size"/>
         
         <virtual_machine name="solo5">
             <vcpu id="0"/>
             <!--
              Must map in memory from 0 onwards, per HVT spec.
             -->
-            <map mr="guest_ram" vaddr="0x0" perms="rwx" cached="true"/>
+            <map mr="guest_ram" vaddr="0x0" perms="rwx"/>
         </virtual_machine>
     </protection_domain>
 </system>
