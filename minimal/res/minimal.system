@@ -6,7 +6,7 @@
     -->
     <memory_region name="guest_ram" size="0x10000000"/>
 
-    <protection_domain name="VMM" priority="254">
+    <protection_domain name="VMM" priority="254" stack_size="0x4000">
         <program_image path="vmm.elf"/>
         <map mr="guest_ram" vaddr="0x20000000" perms="rw" setvar_vaddr="guest_ram_vaddr" setvar_size="guest_ram_size"/>
         
