@@ -4,10 +4,10 @@ Targets vary by template, read the associated markdown files.
 <br>
 Available templates:
 - minimal: Starts one unikernel, does not implement any hypercalls
-- full: Starts one unikernel, with hypercall implementations using SDDF for serial
+- full: Starts one unikernel, with hypercall implementations using SDDF for serial and timer
 - full linux: Starts one unikernel, with hypercall implementations using Linux
 - shared linux:  Starts two unikernels, with hypercall implementations using Linux
-- split linux:  Starts one unikernel, with hypercall implementations using Linux, except for serial, which runs as a sel component using SDDF
+- split linux:  Starts one unikernel, with hypercall implementations using Linux, except for serial, which runs as a sel4 component using SDDF (+ Virtio for linux)
 
 ## Dependencies
 - All templates require you have a Aarch64 bare-metal toolchain in your PATH, downloads available from [ARM](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
@@ -21,3 +21,4 @@ export PATH=/example/path/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-elf/bi
 ```bash
 git submodule update --init
 ```
+
