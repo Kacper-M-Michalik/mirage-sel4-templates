@@ -1,5 +1,3 @@
-BUILD_DIR ?= build
-
 ifeq ($(strip $(MICROKIT_SDK)),)
 $(error MICROKIT_SDK must be specified)
 endif
@@ -12,24 +10,29 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
-# Make relevant paths absolute
-override MICROKIT_SDK := $(abspath ${MICROKIT_SDK})
-BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
-ARCH := ${shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4}
-DEPS := $(abspath ./../minimal/deps)
-RESOURCES := $(abspath ./)
-INC_DIR := $(abspath ./)
-SRC_DIR := $(abspath ./)
-
-# Core build files
-IMAGE_FILE ?= loader.img
-REPORT_FILE ?= report.txt
-BUILD_MAKE ?= full.mk
 GUEST_FILE ?= hello.hvt
 
+# Make absolute
+override MICROKIT_SDK := $(realpath $(MICROKIT_SDK))
+override GUEST_FILE := $(realpath $(GUEST_FILE))
 
-export BUILD_DIR
-export MICROKIT_SDK
+# Since the clean deletes the folder, best disallow user from changing build dir
+override BUILD_DIR := $(abspath ./build)
+
+# Core paths
+BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
+ARCH := $(shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4)
+DEPS := $(realpath ./../minimal/deps)
+INC_DIR := $(realpath ./)
+SRC_DIR := $(realpath ./)
+
+# Core build files
+SYSTEM := full.system
+IMAGE_FILE := loader.img
+REPORT_FILE := report.txt
+BUILD_MAKE := full.mk
+
+# Export new variables for sub-makes
 export MICROKIT_BOARD
 export MICROKIT_CONFIG
 export BOARD_DIR
@@ -39,22 +42,27 @@ export REPORT_FILE
 export INC_DIR
 export SRC_DIR
 export DEPS
-export RESOURCES
+export SYSTEM
 export GUEST_FILE
 
 
-### Call actual build makefile ###
-all: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+### Build rules ###
+all: clean build 
 
-$(BUILD_DIR)/$(IMAGE_FILE) $(REPORT_FILE): $(BUILD_DIR)/Makefile FORCE
-	${MAKE} -C ${BUILD_DIR} $(notdir $@)
+build: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE) 
 
-${BUILD_DIR}/Makefile: $(BUILD_MAKE)
-	mkdir -p ${BUILD_DIR}
-	cp $(BUILD_MAKE) $@
+clean:
+	rm -rf $(BUILD_DIR)
 
+# Copy minimal makefile into build dir and run
+$(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE): 
+	mkdir -p $(BUILD_DIR)
+	cp $(BUILD_MAKE) $(BUILD_DIR)/Makefile
+	$(MAKE) -C $(BUILD_DIR) MICROKIT_SDK=$(MICROKIT_SDK) BUILD_DIR=$(BUILD_DIR) GUEST_FILE=$(GUEST_FILE) $(notdir $@)
+
+# Only allow qemu when built for qemu_virt_aarch64
 ifeq ($(strip $(MICROKIT_BOARD)), qemu_virt_aarch64)
-qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+qemu: all
 	qemu-system-aarch64 -machine virt,virtualization=on,highmem=off,secure=off \
 				-cpu cortex-a53 \
 				-serial mon:stdio \
@@ -62,8 +70,6 @@ qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
 				-m size=2G \
 				-nographic
 else
-qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
-	echo "QEMU not supported for $(MICROKIT_BOARD) (skipping simulation)"
-endif 
-
-FORCE:
+qemu:
+	echo "QEMU not supported for $(MICROKIT_BOARD) (skipping build and simulation)"
+endif

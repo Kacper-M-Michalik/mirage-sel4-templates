@@ -1,4 +1,5 @@
-This example should be buildable for all aarch64 boards that support virtualisation (Armv8)
+This example should be buildable for all aarch64 boards that support virtualisation (Armv8) and QEMU.
+Some precompiled MirageOS unikernels can be found in /examples
 
 To build this example, fill in and run:
 ```bash

@@ -5,26 +5,31 @@
 #include <sddf/util/printf.h>
 #include <sddf/serial/queue.h>
 #include <sddf/serial/config.h>
+#include <sddf/timer/client.h>
+#include <sddf/timer/config.h>
 #include <solo5libvmm/guest.h>
 #include <solo5libvmm/fault.h>
-//#include <solo5libvmm/hvt_abi.h>
+#include <solo5libvmm/solo5/hvt_abi.h>
 #include <solo5libvmm/util.h>
+
+// SDDF provides driver configs through named sections
+__attribute__((__section__(".serial_client_config"))) serial_client_config_t serial_config;
+__attribute__((__section__(".timer_client_config"))) timer_client_config_t timer_config;
+
+// Handles to serial read and write queues respectively
+serial_queue_handle_t rx_queue_handle;
+serial_queue_handle_t tx_queue_handle;
 
 // Data for the guest's kernel image
 extern uint8_t _binary_guest_start[];
 extern uint8_t _binary_guest_end[];
 extern size_t _binary_guest_size[]; // Doesn't work without []
 
-// NOT Linked by microkit using system xml
+// Guest machine information
+uint32_t guest_vcpu_id = 0;
 uint8_t* guest_ram_vaddr = (uint8_t*)0x30000000;
 size_t guest_ram_size= 0x10000000;
-
-// SDDF provides configs through named sections
-__attribute__((__section__(".serial_client_config"))) serial_client_config_t config;
-
-// Handles to serial read and write queues respectively
-serial_queue_handle_t rx_queue_handle;
-serial_queue_handle_t tx_queue_handle;
+bool waiting_for_timeout = false;
 
 // Provide printf() for solo5libvmm
 int printf(const char *fmt, ...) 
@@ -38,13 +43,15 @@ int printf(const char *fmt, ...)
 
 void init(void)
 {    
-    // Initialise read and write queues
-    assert(serial_config_check_magic(&config));
-    serial_queue_init(&rx_queue_handle, config.rx.queue.vaddr, config.rx.data.size, config.rx.data.vaddr);
-    serial_queue_init(&tx_queue_handle, config.tx.queue.vaddr, config.tx.data.size, config.tx.data.vaddr);
-
+    // Initialise serial read and write queues
+    assert(serial_config_check_magic(&serial_config));
+    serial_queue_init(&rx_queue_handle, serial_config.rx.queue.vaddr, serial_config.rx.data.size, serial_config.rx.data.vaddr);
+    serial_queue_init(&tx_queue_handle, serial_config.tx.queue.vaddr, serial_config.tx.data.size, serial_config.tx.data.vaddr);
     // Initialise serial write function
-    serial_putchar_init(config.tx.id, &tx_queue_handle);
+    serial_putchar_init(serial_config.tx.id, &tx_queue_handle);
+
+    // Initialise timer
+    assert(timer_config_check_magic(&timer_config));
 
     // Boot up guest
     sddf_printf("Guest memory addr: %zu\n", guest_ram_vaddr);
@@ -53,24 +60,36 @@ void init(void)
     sddf_printf("Starting bootup\n");
 
     char cmdline[] = "";
-    bool success = guest_setup(0, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
+    bool success = guest_setup(guest_vcpu_id, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
     sddf_printf("Load success: %d\n", success);
 
-    if (success) sddf_printf("\n");//guest_resume(0);
+    if (success) guest_resume(guest_vcpu_id);
     else sddf_printf("Failed to load guest image\n");
 }
 
 void notified(microkit_channel ch)
 {
-    if (ch == config.tx.id) // Write interrupt, we get this one time when we initialise the serial, but never see it again
+    if (ch == serial_config.tx.id) // Write interrupt, we get this one time when we initialise the serial, but never see it again
     {        
     } 
-    else if (ch == config.rx.id) // We got input from serial, ignore as solo5 doesnt support interrupt based input
+    else if (ch == serial_config.rx.id) // We got input from serial, ignore as solo5 doesnt support interrupt based input
     {        
     } 
+    else if (ch == timer_config.driver_id) // We got a notification about an elapsed timer, which we use to implement the poll hypercall
+    {
+        if (waiting_for_timeout) 
+        {
+            waiting_for_timeout = false;
+            guest_resume(guest_vcpu_id);
+        }
+        else
+        {
+            LOG_VMM("Reached undefined state!\n"); 
+        }        
+    }
     else
     {
-        sddf_printf("Unexpected channel, ch: 0x%lx\n", ch);
+        LOG_VMM("Unexpected channel, ch: 0x%lx\n", ch);
     }    
 }
 
@@ -92,20 +111,20 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
                 uint64_t data = *(guest_ram_vaddr + puts->data + i);
                 sddf_printf("%c", (char)data);
             }
-            guest_resume(child);
+            guest_resume(guest_vcpu_id);
             break;  
         case HVT_HYPERCALL_WALLTIME:
             struct hvt_hc_walltime* walltime = (struct hvt_hc_walltime*)hc_data;
-            walltime->nsecs = 0;
-            guest_resume(child);
+            uint64_t time = sddf_timer_time_now(timer_config.driver_id);
+            walltime->nsecs = time;
+            guest_resume(guest_vcpu_id);
             break;  
         case HVT_HYPERCALL_POLL:
             struct hvt_hc_poll* poll = (struct hvt_hc_poll*)hc_data;
             poll->ready_set = 0;
             poll->ret = 0;
-            guest_resume(child);
-            //LOG_VMM("Poll_cpy nsecs: %ld\n", pollcpy.timeout_nsecs);
-            //LOG_VMM("Poll nsecs: %ld\n", poll->timeout_nsecs);        
+            waiting_for_timeout = true;
+            sddf_timer_set_timeout(timer_config.driver_id, poll->timeout_nsecs);  
             break;   
         case HVT_HYPERCALL_HALT:
             struct hvt_hc_halt* halt = (struct hvt_hc_halt*)hc_data;            
@@ -113,7 +132,7 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
             break;     
         default:
             LOG_VMM("Reached impossible hypercall");
-            assert(0);
+            was_handled = false;
             break;
     }
 
@@ -123,5 +142,6 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
         *reply_msginfo = microkit_msginfo_new(0, 0);
         return seL4_True;
     }
+
     return seL4_False;    
 }

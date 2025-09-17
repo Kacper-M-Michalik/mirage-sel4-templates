@@ -57,5 +57,4 @@ guest_img.o: $(GUEST_FILE)
 
 # Generate final image
 $(IMAGE_FILE) $(REPORT_FILE): $(IMAGES) $(SYSTEM)
-	echo $(MICROKIT_SDK)
 	$(MICROKIT_TOOL) $(SYSTEM) --search-path $(BUILD_DIR) --board $(MICROKIT_BOARD) --config $(MICROKIT_CONFIG) -o $(IMAGE_FILE) -r $(REPORT_FILE)

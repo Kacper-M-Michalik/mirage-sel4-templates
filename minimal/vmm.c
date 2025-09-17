@@ -5,7 +5,8 @@
 #include <solo5libvmm/fault.h>
 #include <solo5libvmm/util.h>
 #include <solo5libvmm/solo5/hvt_abi.h>
-#include <util.h>
+#include <sddf/util/util.h>
+#include <sddf/util/printf.h>
 
 // Data for the guest's kernel image
 extern uint8_t _binary_guest_start[];
@@ -15,6 +16,16 @@ extern size_t _binary_guest_size[]; // Doesn't work without [], even if set as s
 // Linked by microkit using system xml
 uint8_t* guest_ram_vaddr;
 size_t guest_ram_size;
+
+// Provide printf() for solo5libvmm
+int printf(const char *fmt, ...) 
+{
+    va_list args;
+    va_start(args, fmt);
+    int ret = sddf_vprintf(fmt, args);
+    va_end(args);
+    return ret;
+}
 
 void init(void)
 {

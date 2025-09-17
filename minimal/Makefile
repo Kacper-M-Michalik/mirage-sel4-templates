@@ -10,25 +10,27 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
-# Since the clean deletes the folder, best keep this
-override BUILD_DIR := $(realpath ./build)
+GUEST_FILE ?= examples/hello.hvt
+
 # Make absolute
 override MICROKIT_SDK := $(realpath $(MICROKIT_SDK))
+override GUEST_FILE := $(realpath $(GUEST_FILE))
+
+# Since the clean deletes the folder, best disallow user from changing build dir
+override BUILD_DIR := $(abspath ./build)
 
 # Core paths
 BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
-ARCH := ${shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4}
+ARCH := $(shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4)
 DEPS := $(realpath ./deps)
-RESOURCES := $(realpath ./examples)
 INC_DIR := $(realpath ./)
 SRC_DIR := $(realpath ./)
 
 # Core build files
-SYSTEM ?= $(realpath ./minimal.system)
-IMAGE_FILE ?= loader.img
-REPORT_FILE ?= report.txt
-BUILD_MAKE ?= minimal.mk
-GUEST_FILE ?= $(RESOURCES)/hello.hvt
+SYSTEM := $(realpath ./minimal.system)
+IMAGE_FILE := loader.img
+REPORT_FILE := report.txt
+BUILD_MAKE := minimal.mk
 
 # Export new variables for sub-makes
 export MICROKIT_BOARD
@@ -40,9 +42,9 @@ export REPORT_FILE
 export INC_DIR
 export SRC_DIR
 export DEPS
-export RESOURCES
 export SYSTEM
 export GUEST_FILE
+
 
 ### Build rules ###
 all: clean build 
@@ -56,11 +58,11 @@ clean:
 $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE): 
 	mkdir -p $(BUILD_DIR)
 	cp $(BUILD_MAKE) $(BUILD_DIR)/Makefile
-	$(MAKE) -C $(BUILD_DIR) MICROKIT_SDK=$(MICROKIT_SDK) BUILD_DIR=$(BUILD_DIR) $(notdir $@)
+	$(MAKE) -C $(BUILD_DIR) MICROKIT_SDK=$(MICROKIT_SDK) BUILD_DIR=$(BUILD_DIR) GUEST_FILE=$(GUEST_FILE) $(notdir $@)
 
-# Only allow qemu when built for virt_arch
+# Only allow qemu when built for qemu_virt_aarch64
 ifeq ($(strip $(MICROKIT_BOARD)), qemu_virt_aarch64)
-qemu: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+qemu: all
 	qemu-system-aarch64 -machine virt,virtualization=on,highmem=off,secure=off \
 				-cpu cortex-a53 \
 				-serial mon:stdio \

@@ -12,15 +12,19 @@
     <memory_region name="pl011@9000000/serial/data/serial_virt_tx/VMM" size="0x10000" />
     <protection_domain name="VMM" priority="1" stack_size="0x4000">
         <program_image path="vmm.elf" />
-        <virtual_machine name="solo5">
-            <vcpu id="0"/>
-            <map mr="guest_ram" vaddr="0x0" perms="rwx"/>
-        </virtual_machine>
         <map mr="guest_ram" vaddr="0x30000000" perms="rw" cached="true" />
         <map mr="pl011@9000000/serial/queue/serial_virt_rx/VMM" vaddr="0x40000000" perms="rw" />
         <map mr="pl011@9000000/serial/data/serial_virt_rx/VMM" vaddr="0x40001000" perms="rw" />
         <map mr="pl011@9000000/serial/queue/serial_virt_tx/VMM" vaddr="0x40011000" perms="rw" />
         <map mr="pl011@9000000/serial/data/serial_virt_tx/VMM" vaddr="0x40012000" perms="rw" />
+        <virtual_machine name="solo5">
+            <vcpu id="0"/>
+            <map mr="guest_ram" vaddr="0x0" perms="rwx"/>
+        </virtual_machine>
+    </protection_domain>
+    <protection_domain name="timer_driver" priority="201" passive="true">
+        <program_image path="timer_driver.elf" />
+        <irq irq="30" id="0" trigger="level" />
     </protection_domain>
     <protection_domain name="serial_driver" priority="200">
         <program_image path="serial_driver.elf" />
@@ -46,12 +50,16 @@
         <map mr="pl011@9000000/serial/data/serial_virt_rx/VMM" vaddr="0x20012000" perms="rw" />
     </protection_domain>
     <channel>
+        <end pd="timer_driver" id="1" />
+        <end pd="VMM" id="0" notify="false" pp="true" />
+    </channel>
+    <channel>
         <end pd="serial_driver" id="1" />
         <end pd="serial_virt_rx" id="0" />
     </channel>
     <channel>
         <end pd="serial_virt_rx" id="1" />
-        <end pd="VMM" id="0" />
+        <end pd="VMM" id="1" />
     </channel>
     <channel>
         <end pd="serial_driver" id="2" />
@@ -59,6 +67,6 @@
     </channel>
     <channel>
         <end pd="serial_virt_tx" id="1" />
-        <end pd="VMM" id="1" />
+        <end pd="VMM" id="2" />
     </channel>
 </system>

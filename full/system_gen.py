@@ -17,6 +17,7 @@ class Board:
     arch: SystemDescription.Arch
     paddr_top: int
     serial: str
+    timer: str
 
 
 BOARDS: List[Board] = [
@@ -25,12 +26,14 @@ BOARDS: List[Board] = [
         arch=SystemDescription.Arch.AARCH64,
         paddr_top=0x6_0000_000,
         serial="pl011@9000000",
+        timer="timer",
     ),
     Board(
         name="rpi4b_1gb",
         arch=SystemDescription.Arch.AARCH64,
         paddr_top=0xA0000000,
         serial="soc/serial@10000000",
+        timer="timer",
     )
 ]
 # TODO: fix pi build
@@ -53,7 +56,16 @@ def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
     # Add our components to system description
     sdf.add_mr(guest_memory)    
     sdf.add_pd(vmm)
-
+    
+    # Setup timer
+    timer_driver = ProtectionDomain("timer_driver", "timer_driver.elf", priority=201)
+    sdf.add_pd(timer_driver)
+    
+    timer_node = dtb.node(board.timer)
+    assert timer_node is not None   
+    timer_system = Sddf.Timer(sdf, timer_node, timer_driver)
+    timer_system.add_client(vmm)    
+    
     # Setup serial
     serial_driver = ProtectionDomain("serial_driver", "serial_driver.elf", priority=200)
     serial_virt_tx = ProtectionDomain("serial_virt_tx", "serial_virt_tx.elf", priority=199, stack_size=0x2000)
@@ -66,10 +78,13 @@ def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
     assert serial_node is not None
     serial_system = Sddf.Serial(sdf, serial_node, serial_driver, serial_virt_tx, virt_rx=serial_virt_rx)
     serial_system.add_client(vmm)
-
+    
+    # Serialise drivers to system description
+    assert timer_system.connect()
+    assert timer_system.serialise_config(output_dir)
     assert serial_system.connect()
     assert serial_system.serialise_config(output_dir)
-
+    
     # Output final system description
     with open(f"{output_dir}/{sdf_file}", "w+") as f:
         f.write(sdf.render())
