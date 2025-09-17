@@ -10,7 +10,7 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
-GUEST_FILE ?= examples/hello.hvt
+GUEST_FILE ?= ./../example_kernels/hello.hvt
 
 # Make absolute
 override MICROKIT_SDK := $(realpath $(MICROKIT_SDK))
