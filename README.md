@@ -10,7 +10,7 @@ Available templates:
 - split linux:  Starts one unikernel, with hypercall implementations using Linux, except for serial, which runs as a sel4 component using SDDF (+ Virtio for linux)
 
 ## Dependencies
-- All templates require you have a Aarch64 bare-metal toolchain in your PATH, downloads available from [ARM](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). Example command to add the toolchain to you path (do not include the <>):
+- All templates require you have a Aarch64 bare-metal toolchain (aarch64-none-elf) in your PATH, ready toolchains are available from [ARM](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). Example command to add the toolchain to you path (do not include the <>):
 ```bash
 export PATH=</example/path/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-elf/bin>:$PATH
 ```

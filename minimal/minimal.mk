@@ -47,7 +47,7 @@ vmm.o: $(SRC_DIR)/vmm.c
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 # Copy guest image into build dir and rename symbols for linking into vmm.c
-guest_img.o: $(GUEST_FILE) FORCE
+guest_img.o: $(GUEST_FILE)
 	cp $(GUEST_FILE) ./guest.hvt
 	$(OBJCOPY) -I binary -O elf64-littleaarch64 -B aarch64 \
 	--redefine-sym _binary_guest_hvt_start=_binary_guest_start \
@@ -56,7 +56,6 @@ guest_img.o: $(GUEST_FILE) FORCE
 	guest.hvt $@
 
 # Generate final image
-$(IMAGE_FILE) $(REPORT_FILE): $(IMAGES) $(SYSTEM) Makefile
+$(IMAGE_FILE) $(REPORT_FILE): $(IMAGES) $(SYSTEM)
+	echo $(MICROKIT_SDK)
 	$(MICROKIT_TOOL) $(SYSTEM) --search-path $(BUILD_DIR) --board $(MICROKIT_BOARD) --config $(MICROKIT_CONFIG) -o $(IMAGE_FILE) -r $(REPORT_FILE)
-
-FORCE:
