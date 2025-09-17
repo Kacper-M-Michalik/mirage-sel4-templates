@@ -1,23 +1,23 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <microkit.h>
+#include <sddf/util/util.h>
 #include <sddf/util/printf.h>
 #include <sddf/serial/queue.h>
 #include <sddf/serial/config.h>
-//#include <solo5libvmm/guest.h>
-//#include <solo5libvmm/fault.h>
+#include <solo5libvmm/guest.h>
+#include <solo5libvmm/fault.h>
 //#include <solo5libvmm/hvt_abi.h>
-//#include <solo5libvmm/util.h>
-#include <util.h>
+#include <solo5libvmm/util.h>
 
 // Data for the guest's kernel image
 extern uint8_t _binary_guest_start[];
 extern uint8_t _binary_guest_end[];
 extern size_t _binary_guest_size[]; // Doesn't work without []
 
-// Linked by microkit using system xml
-uint8_t* guest_ram_vaddr;
-size_t guest_ram_size;
+// NOT Linked by microkit using system xml
+uint8_t* guest_ram_vaddr = (uint8_t*)0x30000000;
+size_t guest_ram_size= 0x10000000;
 
 // SDDF provides configs through named sections
 __attribute__((__section__(".serial_client_config"))) serial_client_config_t config;
@@ -25,6 +25,16 @@ __attribute__((__section__(".serial_client_config"))) serial_client_config_t con
 // Handles to serial read and write queues respectively
 serial_queue_handle_t rx_queue_handle;
 serial_queue_handle_t tx_queue_handle;
+
+// Provide printf() for solo5libvmm
+int printf(const char *fmt, ...) 
+{
+    va_list args;
+    va_start(args, fmt);
+    int ret = sddf_vprintf(fmt, args);
+    va_end(args);
+    return ret;
+}
 
 void init(void)
 {    
@@ -43,7 +53,7 @@ void init(void)
     sddf_printf("Starting bootup\n");
 
     char cmdline[] = "";
-    bool success = 1; //guest_setup(0, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
+    bool success = guest_setup(0, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
     sddf_printf("Load success: %d\n", success);
 
     if (success) sddf_printf("\n");//guest_resume(0);
@@ -52,12 +62,20 @@ void init(void)
 
 void notified(microkit_channel ch)
 {
-    sddf_printf("Unexpected channel, ch: 0x%lx\n", ch);
+    if (ch == config.tx.id) // Write interrupt, we get this one time when we initialise the serial, but never see it again
+    {        
+    } 
+    else if (ch == config.rx.id) // We got input from serial, ignore as solo5 doesnt support interrupt based input
+    {        
+    } 
+    else
+    {
+        sddf_printf("Unexpected channel, ch: 0x%lx\n", ch);
+    }    
 }
 
 seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo *reply_msginfo) 
 {    
-    /*
     enum hvt_hypercall hc; 
     void* hc_data;
 
@@ -72,7 +90,7 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
             for (uint64_t i = 0; i < puts->len; i++)
             {
                 uint64_t data = *(guest_ram_vaddr + puts->data + i);
-                printf("%c", (char)data);
+                sddf_printf("%c", (char)data);
             }
             guest_resume(child);
             break;  
@@ -105,22 +123,5 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
         *reply_msginfo = microkit_msginfo_new(0, 0);
         return seL4_True;
     }
-        */
     return seL4_False;    
 }
-
-/*
-char c;
-    while (!serial_dequeue(&rx_queue_handle, &c)) {
-        if (c == '\r') {
-            sddf_putchar_unbuffered('\\');
-            sddf_putchar_unbuffered('r');
-        } else {
-            sddf_putchar_unbuffered(c);
-        }
-        char_count++;
-        if (char_count % 10 == 0) {
-            sddf_printf("\n%s has received %u characters so far!\n", microkit_name, char_count);
-        }
-    }
-*/

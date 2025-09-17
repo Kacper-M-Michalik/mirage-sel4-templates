@@ -36,41 +36,41 @@ BOARDS: List[Board] = [
 # TODO: fix pi build
 
 def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
+        
+    guest_memory = MemoryRegion(sdf, name="guest_ram", size=0x10000000)
+
+    # Create VMM
+    vmm = ProtectionDomain("VMM", "vmm.elf", priority=1, stack_size=0x4000)
+    vmm_map = Map(guest_memory, vaddr=0x30000000, perms="rw") #, setvar_vaddr="guest_ram_vaddr", setvar_size="guest_ram_size")
+    vmm.add_map(vmm_map)
+
+    # Create guest machine
+    guest = VirtualMachine("solo5", [VirtualMachine.Vcpu(id=0)])
+    guest_map = Map(guest_memory, vaddr=0x0, perms="rwx")
+    guest.add_map(guest_map)
+    #vmm.set_virtual_machine(guest) # Broken
+    
+    # Add our components to system description
+    sdf.add_mr(guest_memory)    
+    sdf.add_pd(vmm)
+
+    # Setup serial
     serial_driver = ProtectionDomain("serial_driver", "serial_driver.elf", priority=200)
     serial_virt_tx = ProtectionDomain("serial_virt_tx", "serial_virt_tx.elf", priority=199, stack_size=0x2000)
     serial_virt_rx = ProtectionDomain("serial_virt_rx", "serial_virt_rx.elf", priority=199, stack_size=0x2000)
+    sdf.add_pd(serial_driver)
+    sdf.add_pd(serial_virt_tx)
+    sdf.add_pd(serial_virt_rx)
     
-    guest_memory = MemoryRegion(name="guest_ram", size=0x10000000)
-    
-    vmm = ProtectionDomain("VMM", "vmm.elf", priority=1, stack_size=0x4000)
-    vmm_map = Map(guest_memory, vaddr=0x20000000, perms="rw") #, setvar_vaddr="guest_ram_vaddr", setvar_size="guest_ram_size")
-    vmm.add_map(vmm_map)
-    
-    guest_machine = VirtualMachine("solo5", [VirtualMachine.Vcpu(id=0)])
-    guest_map = Map(guest_memory, vaddr=0x0, perms="rwx")
-    guest_machine.add_map(guest_map)
-    vmm.set_virtual_machine(guest_machine)
-    
-
     serial_node = dtb.node(board.serial)
     assert serial_node is not None
-
     serial_system = Sddf.Serial(sdf, serial_node, serial_driver, serial_virt_tx, virt_rx=serial_virt_rx)
     serial_system.add_client(vmm)
-
-    pds = [
-        serial_driver,
-        serial_virt_tx,
-        serial_virt_rx,
-        vmm
-    ]
-    
-    for pd in pds:
-        sdf.add_pd(pd)
 
     assert serial_system.connect()
     assert serial_system.serialise_config(output_dir)
 
+    # Output final system description
     with open(f"{output_dir}/{sdf_file}", "w+") as f:
         f.write(sdf.render())
 

@@ -24,7 +24,7 @@ SRC_DIR := $(abspath ./)
 # Core build files
 IMAGE_FILE ?= loader.img
 REPORT_FILE ?= report.txt
-BUILD_MAKE ?= minimal.mk
+BUILD_MAKE ?= full.mk
 GUEST_FILE ?= hello.hvt
 
 

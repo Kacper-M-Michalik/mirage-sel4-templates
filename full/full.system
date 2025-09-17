@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+    <memory_region name="guest_ram" size="0x10000000" />
+    <memory_region name="pl011@9000000/drivers/serial/arm/regs" size="0x1000" phys_addr="0x9000000" />
+    <memory_region name="pl011@9000000/serial/queue/serial_driver/serial_virt_rx" size="0x1000" />
+    <memory_region name="pl011@9000000/serial/data/serial_driver/serial_virt_rx" size="0x10000" />
+    <memory_region name="pl011@9000000/serial/queue/serial_virt_rx/VMM" size="0x1000" />
+    <memory_region name="pl011@9000000/serial/data/serial_virt_rx/VMM" size="0x10000" />
+    <memory_region name="pl011@9000000/serial/queue/serial_driver/serial_virt_tx" size="0x1000" />
+    <memory_region name="pl011@9000000/serial/data/serial_driver/serial_virt_tx" size="0x20000" />
+    <memory_region name="pl011@9000000/serial/queue/serial_virt_tx/VMM" size="0x1000" />
+    <memory_region name="pl011@9000000/serial/data/serial_virt_tx/VMM" size="0x10000" />
+    <protection_domain name="VMM" priority="1" stack_size="0x4000">
+        <program_image path="vmm.elf" />
+        <virtual_machine name="solo5">
+            <vcpu id="0"/>
+            <map mr="guest_ram" vaddr="0x0" perms="rwx"/>
+        </virtual_machine>
+        <map mr="guest_ram" vaddr="0x30000000" perms="rw" cached="true" />
+        <map mr="pl011@9000000/serial/queue/serial_virt_rx/VMM" vaddr="0x40000000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_virt_rx/VMM" vaddr="0x40001000" perms="rw" />
+        <map mr="pl011@9000000/serial/queue/serial_virt_tx/VMM" vaddr="0x40011000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_virt_tx/VMM" vaddr="0x40012000" perms="rw" />
+    </protection_domain>
+    <protection_domain name="serial_driver" priority="200">
+        <program_image path="serial_driver.elf" />
+        <map mr="pl011@9000000/drivers/serial/arm/regs" vaddr="0x20000000" perms="rw" cached="false" />
+        <map mr="pl011@9000000/serial/queue/serial_driver/serial_virt_rx" vaddr="0x20001000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_driver/serial_virt_rx" vaddr="0x20002000" perms="rw" />
+        <map mr="pl011@9000000/serial/queue/serial_driver/serial_virt_tx" vaddr="0x20012000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_driver/serial_virt_tx" vaddr="0x20013000" perms="rw" />
+        <irq irq="33" id="0" trigger="level" />
+    </protection_domain>
+    <protection_domain name="serial_virt_tx" priority="199" stack_size="0x2000">
+        <program_image path="serial_virt_tx.elf" />
+        <map mr="pl011@9000000/serial/queue/serial_driver/serial_virt_tx" vaddr="0x20000000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_driver/serial_virt_tx" vaddr="0x20001000" perms="rw" />
+        <map mr="pl011@9000000/serial/queue/serial_virt_tx/VMM" vaddr="0x20021000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_virt_tx/VMM" vaddr="0x20022000" perms="rw" />
+    </protection_domain>
+    <protection_domain name="serial_virt_rx" priority="199" stack_size="0x2000">
+        <program_image path="serial_virt_rx.elf" />
+        <map mr="pl011@9000000/serial/queue/serial_driver/serial_virt_rx" vaddr="0x20000000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_driver/serial_virt_rx" vaddr="0x20001000" perms="rw" />
+        <map mr="pl011@9000000/serial/queue/serial_virt_rx/VMM" vaddr="0x20011000" perms="rw" />
+        <map mr="pl011@9000000/serial/data/serial_virt_rx/VMM" vaddr="0x20012000" perms="rw" />
+    </protection_domain>
+    <channel>
+        <end pd="serial_driver" id="1" />
+        <end pd="serial_virt_rx" id="0" />
+    </channel>
+    <channel>
+        <end pd="serial_virt_rx" id="1" />
+        <end pd="VMM" id="0" />
+    </channel>
+    <channel>
+        <end pd="serial_driver" id="2" />
+        <end pd="serial_virt_tx" id="0" />
+    </channel>
+    <channel>
+        <end pd="serial_virt_tx" id="1" />
+        <end pd="VMM" id="1" />
+    </channel>
+</system>

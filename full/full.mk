@@ -32,7 +32,7 @@ SYSTEM := full.system
 DTS := $(SDDF)/dts/$(MICROKIT_BOARD).dts
 DTB := $(MICROKIT_BOARD).dtb
 
-IMAGES := vmm.elf
+IMAGES := vmm.elf serial_driver.elf serial_virt_tx.elf serial_virt_rx.elf
 VMM_OBJS = vmm.o guest_img.o
 SDDF_CUSTOM_LIBC := 1 
 
@@ -55,6 +55,9 @@ include $(SDDF)/serial/components/serial_components.mk
 
 include $(SOLO5LIBVMM)/solo5libvmm.mk
 
+#%.elf: %.o
+#	${LD} -o $@ ${LDFLAGS} $< ${LIBS}
+
 vmm.elf: $(VMM_OBJS) libsddf_util.a solo5libvmm.a
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
@@ -74,12 +77,13 @@ $(DTB): $(DTS)
 
 $(SYSTEM): $(SYS_GEN) $(IMAGES) $(DTB)
 	$(PYTHON) $(SYS_GEN) --sddf $(SDDF) --board $(MICROKIT_BOARD) --dtb $(DTB) --output . --sdf $(SYSTEM)
+	rm ./full.system
+	cp ./../full.system ./full.system
 	$(OBJCOPY) --update-section .device_resources=serial_driver_device_resources.data serial_driver.elf
 	$(OBJCOPY) --update-section .serial_driver_config=serial_driver_config.data serial_driver.elf
 	$(OBJCOPY) --update-section .serial_virt_rx_config=serial_virt_rx.data serial_virt_rx.elf
 	$(OBJCOPY) --update-section .serial_virt_tx_config=serial_virt_tx.data serial_virt_tx.elf
-	$(OBJCOPY) --update-section .serial_client_config=serial_client_client0.data client0.elf
-	$(OBJCOPY) --update-section .serial_client_config=serial_client_client1.data client1.elf
+	$(OBJCOPY) --update-section .serial_client_config=serial_client_VMM.data vmm.elf
 
 $(IMAGE_FILE) $(REPORT_FILE): $(IMAGES) $(SYSTEM) Makefile
 	$(MICROKIT_TOOL) $(SYSTEM) --search-path $(BUILD_DIR) --board $(MICROKIT_BOARD) --config $(MICROKIT_CONFIG) -o $(IMAGE_FILE) -r $(REPORT_FILE)
