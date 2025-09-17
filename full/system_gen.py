@@ -1,0 +1,96 @@
+import argparse
+from typing import List
+from dataclasses import dataclass
+from sdfgen import SystemDescription, Sddf, DeviceTree, Vmm
+from importlib.metadata import version
+
+assert version("sdfgen").split(".")[1] == "26", "Unexpected sdfgen version"
+
+ProtectionDomain = SystemDescription.ProtectionDomain
+VirtualMachine = SystemDescription.VirtualMachine
+MemoryRegion = SystemDescription.MemoryRegion
+Map = SystemDescription.Map
+
+@dataclass
+class Board:
+    name: str
+    arch: SystemDescription.Arch
+    paddr_top: int
+    serial: str
+
+
+BOARDS: List[Board] = [
+    Board(
+        name="qemu_virt_aarch64",
+        arch=SystemDescription.Arch.AARCH64,
+        paddr_top=0x6_0000_000,
+        serial="pl011@9000000",
+    ),
+    Board(
+        name="rpi4b_1gb",
+        arch=SystemDescription.Arch.AARCH64,
+        paddr_top=0xA0000000,
+        serial="soc/serial@10000000",
+    )
+]
+# TODO: fix pi build
+
+def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
+    serial_driver = ProtectionDomain("serial_driver", "serial_driver.elf", priority=200)
+    serial_virt_tx = ProtectionDomain("serial_virt_tx", "serial_virt_tx.elf", priority=199, stack_size=0x2000)
+    serial_virt_rx = ProtectionDomain("serial_virt_rx", "serial_virt_rx.elf", priority=199, stack_size=0x2000)
+    
+    guest_memory = MemoryRegion(name="guest_ram", size=0x10000000)
+    
+    vmm = ProtectionDomain("VMM", "vmm.elf", priority=1, stack_size=0x4000)
+    vmm_map = Map(guest_memory, vaddr=0x20000000, perms="rw") #, setvar_vaddr="guest_ram_vaddr", setvar_size="guest_ram_size")
+    vmm.add_map(vmm_map)
+    
+    guest_machine = VirtualMachine("solo5", [VirtualMachine.Vcpu(id=0)])
+    guest_map = Map(guest_memory, vaddr=0x0, perms="rwx")
+    guest_machine.add_map(guest_map)
+    vmm.set_virtual_machine(guest_machine)
+    
+
+    serial_node = dtb.node(board.serial)
+    assert serial_node is not None
+
+    serial_system = Sddf.Serial(sdf, serial_node, serial_driver, serial_virt_tx, virt_rx=serial_virt_rx)
+    serial_system.add_client(vmm)
+
+    pds = [
+        serial_driver,
+        serial_virt_tx,
+        serial_virt_rx,
+        vmm
+    ]
+    
+    for pd in pds:
+        sdf.add_pd(pd)
+
+    assert serial_system.connect()
+    assert serial_system.serialise_config(output_dir)
+
+    with open(f"{output_dir}/{sdf_file}", "w+") as f:
+        f.write(sdf.render())
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dtb", required=True)
+    parser.add_argument("--sddf", required=True)
+    parser.add_argument("--board", required=True, choices=[b.name for b in BOARDS])
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--sdf", required=True)
+
+    args = parser.parse_args()
+
+    board = next(filter(lambda b: b.name == args.board, BOARDS))
+
+    sdf = SystemDescription(board.arch, board.paddr_top)
+    sddf = Sddf(args.sddf)
+
+    with open(args.dtb, "rb") as f:
+        dtb = DeviceTree(f.read())
+
+    generate(args.sdf, args.output, dtb)

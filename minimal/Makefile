@@ -1,7 +1,4 @@
-### Arg checks ###
-ifeq ($(strip $(BUILD_DIR)),)
-$(error BUILD_DIR must be specified)
-endif
+BUILD_DIR ?= build
 
 ifeq ($(strip $(MICROKIT_SDK)),)
 $(error MICROKIT_SDK must be specified)
@@ -15,25 +12,22 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
-# Files to build
-IMAGE_FILE := loader.img
-REPORT_FILE := report.txt
-BUILD_MAKE := minimal.mk
-
-# Make relevant paths absolute and export
+# Make relevant paths absolute
 override MICROKIT_SDK := $(abspath ${MICROKIT_SDK})
 BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
 ARCH := ${shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4}
-
 DEPS := $(abspath ./deps)
-RESOURCES := $(abspath ./res)
-INC_DIR := $(abspath ./include)
-SRC_DIR := $(abspath ./src)
-SYSTEM := $(RESOURCES)/minimal.system
+RESOURCES := $(abspath ./examples)
+INC_DIR := $(abspath ./)
+SRC_DIR := $(abspath ./)
 
-ifeq ($(strip $(GUEST_FILE)),)
-GUEST_FILE := hello.hvt
-endif
+# Core build files
+SYSTEM ?= $(abspath ./minimal.system)
+IMAGE_FILE ?= loader.img
+REPORT_FILE ?= report.txt
+BUILD_MAKE ?= minimal.mk
+GUEST_FILE ?= $(RESOURCES)/hello.hvt
+
 
 export BUILD_DIR
 export MICROKIT_SDK
@@ -50,9 +44,11 @@ export RESOURCES
 export SYSTEM
 export GUEST_FILE
 
-all: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
 
 ### Call actual build makefile ###
+all: $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE)
+
+# Copy minimal makefile into build dir and call it
 $(BUILD_DIR)/$(IMAGE_FILE) $(REPORT_FILE): $(BUILD_DIR)/Makefile FORCE
 	${MAKE} -C ${BUILD_DIR} $(notdir $@)
 

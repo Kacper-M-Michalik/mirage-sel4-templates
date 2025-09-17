@@ -7,7 +7,7 @@
 
 # Loader Regions
 
-       <Region name=PD-ELF VMM-0 addr=0x6025b000 size=31412>
+       <Region name=PD-ELF VMM-0 addr=0x6025b000 size=31348>
        <Region name=PD-ELF VMM-1 addr=0x60263000 size=5019520>
 
 # Monitor (Initial Task) Info

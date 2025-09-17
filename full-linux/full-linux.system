@@ -63,14 +63,14 @@
          -->
         <irq irq="33" id="1"/>
     </protection_domain>
-    
-    <protection_domain name="Mirage-VMM" priority="254">
+
+    <protection_domain name="Mirage-VMM" priority="254" stack_size="0x4000">
         <program_image path="mirage-vmm.elf"/>
         <!--
             The VMM needs access to guest memory, we map in guest memory at an address that won't 
-            collide with the VMM's text, stack or heap.
+            collide with the VMM's text, stack or heap
         -->
-        <map mr="mirage_guest_ram" vaddr="0x40000000" perms="rw" setvar_vaddr="mirage_guest_ram_vaddr"/>
+        <map mr="mirage_guest_ram" vaddr="0x40000000" perms="rw" setvar_vaddr="mirage_guest_ram_vaddr" setvar_size="mirage_guest_ram_size"/>
         
         <virtual_machine name="mirage">
             <vcpu id="0"/>
@@ -80,5 +80,4 @@
             <map mr="guest_ram" vaddr="0x0" perms="rwx"/>
         </virtual_machine>
     </protection_domain>
-
 </system>
