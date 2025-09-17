@@ -10,10 +10,9 @@ Available templates:
 - split linux:  Starts one unikernel, with hypercall implementations using Linux, except for serial, which runs as a sel4 component using SDDF (+ Virtio for linux)
 
 ## Dependencies
-- All templates require you have a Aarch64 bare-metal toolchain in your PATH, downloads available from [ARM](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
-<br>To add the the toolchain to your PATH, fill in and run:
+- All templates require you have a Aarch64 bare-metal toolchain in your PATH, downloads available from [ARM](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). Example command to add the toolchain to you path (do not include the <>):
 ```bash
-export PATH=/example/path/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-elf/bin:$PATH
+export PATH=</example/path/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-elf/bin>:$PATH
 ```
 - QEMU is required to run the virtualised board build
 - You need a copy of [Microkit-SDK-2.0.1](https://docs.sel4.systems/releases/microkit.html)
@@ -21,4 +20,3 @@ export PATH=/example/path/arm-gnu-toolchain-14.3.rel1-x86_64-aarch64-none-elf/bi
 ```bash
 git submodule update --init
 ```
-
