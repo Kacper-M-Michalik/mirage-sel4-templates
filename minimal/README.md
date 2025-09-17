@@ -1,4 +1,5 @@
 This example should be buildable for all aarch64 boards that support virtualisation (Armv8) and QEMU.
+
 MICROKIT_BOARD options:
 - qemu_virt_aarch64
 - rpi4b_1gb
@@ -6,7 +7,7 @@ MICROKIT_BOARD options:
 - rpi4b_4gb
 - rpi4b_8gb
 
-Some precompiled MirageOS unikernels can be found in /examples
+Some precompiled MirageOS unikernels can be found in '/example_kernels'
 <br>
 
 To build this example, fill in and run:
