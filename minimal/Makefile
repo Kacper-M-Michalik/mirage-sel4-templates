@@ -13,21 +13,20 @@ $(error MICROKIT_CONFIG must be specified)
 endif
 
 # Make relevant paths absolute
-override MICROKIT_SDK := $(abspath ${MICROKIT_SDK})
+override MICROKIT_SDK := $(realpath ${MICROKIT_SDK})
 BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
 ARCH := ${shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4}
-DEPS := $(abspath ./deps)
-RESOURCES := $(abspath ./examples)
-INC_DIR := $(abspath ./)
-SRC_DIR := $(abspath ./)
+DEPS := $(realpath ./deps)
+RESOURCES := $(realpath ./examples)
+INC_DIR := $(realpath ./)
+SRC_DIR := $(realpath ./)
 
 # Core build files
-SYSTEM ?= $(abspath ./minimal.system)
+SYSTEM ?= $(realpath ./minimal.system)
 IMAGE_FILE ?= loader.img
 REPORT_FILE ?= report.txt
 BUILD_MAKE ?= minimal.mk
 GUEST_FILE ?= $(RESOURCES)/hello.hvt
-
 
 export BUILD_DIR
 export MICROKIT_SDK
