@@ -5,16 +5,19 @@ Additional details abotu SDDF can be found here:
 - https://trustworthy.systems/projects/drivers/sddf-design.pdf
 
 The SDDF system results in complicated and fragile system descriptions, as such the sdfgen python library is used, which allows writing python to help automate generation of a XML system description, as seen in system_gen.py
+
 <br>
+Library Versions:
 
+- sdfgen 0.26.0
+- SDDF 0.6.0
+
+<br>
 This example is buildable for:
-- qemu_virt_aarch64
-- rpi4b_1gb #TBD
-- rpi4b_2gb #TBD
-- rpi4b_4gb #TBD
-- rpi4b_8gb #TBD
 
-Some precompiled MirageOS unikernels can be found in '/example_kernels' folder
+- qemu_virt_aarch64
+
+Some precompiled MirageOS unikernels can be found in '/example-kernels' folder
 <br>
 
 To build this example, fill in and run:

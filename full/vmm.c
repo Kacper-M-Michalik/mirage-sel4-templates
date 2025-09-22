@@ -69,13 +69,10 @@ void init(void)
 
 void notified(microkit_channel ch)
 {
-    if (ch == serial_config.tx.id) // Write interrupt, we get this one time when we initialise the serial, but never see it again
-    {        
-    } 
-    else if (ch == serial_config.rx.id) // We got input from serial, ignore as solo5 doesnt support interrupt based input
-    {        
-    } 
-    else if (ch == timer_config.driver_id) // We got a notification about an elapsed timer, which we use to implement the poll hypercall
+    if (ch == serial_config.tx.id) return; // Write interrupt, we get this one time when we initialise the serial, but never see it again
+    if (ch == serial_config.rx.id) return; // We got input from serial, ignore as solo5 doesn't support interrupt based input
+    
+    if (ch == timer_config.driver_id) // We got a notification about an elapsed timer, which we use to implement the poll hypercall
     {
         if (waiting_for_timeout) 
         {
@@ -86,11 +83,11 @@ void notified(microkit_channel ch)
         {
             LOG_VMM("Reached undefined state!\n"); 
         }        
+
+        return;
     }
-    else
-    {
-        LOG_VMM("Unexpected channel, ch: 0x%lx\n", ch);
-    }    
+    
+    LOG_VMM("Unexpected channel, ch: 0x%lx\n", ch);  
 }
 
 seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo *reply_msginfo) 
@@ -104,6 +101,26 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
 
     switch (hc)
     {
+        case HVT_HYPERCALL_HALT:
+            struct hvt_hc_halt* halt = (struct hvt_hc_halt*)hc_data;            
+            LOG_VMM("Guest exited with code: %ld\n", halt->exit_status);
+            break;    
+                   
+        case HVT_HYPERCALL_WALLTIME:
+            struct hvt_hc_walltime* walltime = (struct hvt_hc_walltime*)hc_data;
+            uint64_t time = sddf_timer_time_now(timer_config.driver_id);
+            walltime->nsecs = time;
+            guest_resume(guest_vcpu_id);
+            break;  
+
+        case HVT_HYPERCALL_POLL:
+            struct hvt_hc_poll* poll = (struct hvt_hc_poll*)hc_data;
+            poll->ready_set = 0;
+            poll->ret = 0;
+            waiting_for_timeout = true;
+            sddf_timer_set_timeout(timer_config.driver_id, poll->timeout_nsecs);  
+            break;   
+
         case HVT_HYPERCALL_PUTS:
             struct hvt_hc_puts* puts = (struct hvt_hc_puts*)hc_data;     
             for (uint64_t i = 0; i < puts->len; i++)
@@ -113,25 +130,13 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
             }
             guest_resume(guest_vcpu_id);
             break;  
-        case HVT_HYPERCALL_WALLTIME:
-            struct hvt_hc_walltime* walltime = (struct hvt_hc_walltime*)hc_data;
-            uint64_t time = sddf_timer_time_now(timer_config.driver_id);
-            walltime->nsecs = time;
-            guest_resume(guest_vcpu_id);
-            break;  
-        case HVT_HYPERCALL_POLL:
-            struct hvt_hc_poll* poll = (struct hvt_hc_poll*)hc_data;
-            poll->ready_set = 0;
-            poll->ret = 0;
-            waiting_for_timeout = true;
-            sddf_timer_set_timeout(timer_config.driver_id, poll->timeout_nsecs);  
-            break;   
-        case HVT_HYPERCALL_HALT:
-            struct hvt_hc_halt* halt = (struct hvt_hc_halt*)hc_data;            
-            LOG_VMM("Guest exited with code: %ld\n", halt->exit_status);
-            break;     
+
+        case HVT_HYPERCALL_BLOCK_READ:
+        case HVT_HYPERCALL_BLOCK_WRITE:
+        case HVT_HYPERCALL_NET_READ:
+        case HVT_HYPERCALL_NET_WRITE:
         default:
-            LOG_VMM("Reached impossible hypercall");
+            LOG_VMM("Reached unimplemented hypercall");
             was_handled = false;
             break;
     }

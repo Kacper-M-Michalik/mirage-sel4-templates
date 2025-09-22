@@ -7,7 +7,7 @@ MICROKIT_BOARD options:
 - rpi4b_4gb
 - rpi4b_8gb
 
-Some precompiled MirageOS unikernels can be found in '/example_kernels'
+Some precompiled MirageOS unikernels can be found in '/example-kernels'
 <br>
 
 To build this example, fill in and run:
