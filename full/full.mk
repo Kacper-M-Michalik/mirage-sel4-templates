@@ -77,8 +77,6 @@ $(DTB): $(DTS)
 #rm and cp are temporary until we fix system_gen
 $(SYSTEM): $(SYS_GEN) $(IMAGES) $(DTB)
 	$(PYTHON) $(SYS_GEN) --sddf $(SDDF) --board $(MICROKIT_BOARD) --dtb $(DTB) --output . --sdf $(SYSTEM)
-	rm ./$(SYSTEM)
-	cp ./../full.system ./$(SYSTEM)
 	$(OBJCOPY) --update-section .device_resources=serial_driver_device_resources.data serial_driver.elf
 	$(OBJCOPY) --update-section .serial_driver_config=serial_driver_config.data serial_driver.elf
 	$(OBJCOPY) --update-section .serial_virt_rx_config=serial_virt_rx.data serial_virt_rx.elf

@@ -51,7 +51,7 @@ def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
     guest = VirtualMachine("solo5", [VirtualMachine.Vcpu(id=0)])
     guest_map = Map(guest_memory, vaddr=0x0, perms="rwx")
     guest.add_map(guest_map)
-    #vmm.set_virtual_machine(guest) # Broken
+    vmm.set_virtual_machine(guest)
     
     # Add our components to system description
     sdf.add_mr(guest_memory)    
