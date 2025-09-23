@@ -3,6 +3,8 @@ MirageOS can be run inside sel4 as a Virtual Machine. Microkit is used to create
 <br><br>
 Currently Microkit and the solo5 VMM library only support virtualisation of aarch64 guests, as such your solo5 based unikernels must be built for aarch64 with the hvt target.
 
+For all build methods, the final executable should be in the ```./dist``` folder.
+
 ## Building on aarch64
 Building on aarch64 follows the standard steps, with hvt as the target:
 
@@ -23,3 +25,5 @@ opam install ocaml-solo5-cross-aarch64
 dune clean
 make build
 ```
+
+If you have problems, try building for x86_64 first, then following the above steps again.
