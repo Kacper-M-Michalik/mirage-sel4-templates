@@ -1,18 +1,9 @@
-[submodule "minimal/deps/solo5libvmm"]
-	path = minimal/deps/solo5libvmm
+[submodule "deps/solo5libvmm"]
+	path = deps/solo5libvmm
 	url = git@github.com:Kacper-M-Michalik/solo5libvmm.git
-[submodule "minimal/deps/sddf"]
-	path = minimal/deps/sddf
+[submodule "deps/sddf"]
+	path = deps/sddf
 	url = git@github.com:au-ts/sddf.git
-[submodule "full/deps/solo5libvmm"]
-	path = full/deps/solo5libvmm
-	url = git@github.com:Kacper-M-Michalik/solo5libvmm.git
-[submodule "full/deps/sddf"]
-	path = full/deps/sddf
-	url = git@github.com:au-ts/sddf.git
-[submodule "full-linux/deps/solo5libvmm"]
-	path = full-linux/deps/solo5libvmm
-	url = git@github.com:Kacper-M-Michalik/solo5libvmm.git
-[submodule "full-linux/deps/libvmm"]
-	path = full-linux/deps/libvmm
-	url = https://github.com/au-ts/libvmm.git
+[submodule "deps/libvmm"]
+	path = deps/libvmm
+	url = git@github.com:au-ts/libvmm.git
