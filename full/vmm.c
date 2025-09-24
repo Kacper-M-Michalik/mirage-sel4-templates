@@ -7,18 +7,25 @@
 #include <sddf/serial/config.h>
 #include <sddf/timer/client.h>
 #include <sddf/timer/config.h>
+#include <sddf/blk/queue.h>
+#include <sddf/blk/storage_info.h>
+#include <sddf/blk/config.h>
 #include <solo5libvmm/guest.h>
 #include <solo5libvmm/fault.h>
 #include <solo5libvmm/solo5/hvt_abi.h>
 #include <solo5libvmm/util.h>
 
 // SDDF provides driver configs through named sections
-__attribute__((__section__(".serial_client_config"))) serial_client_config_t serial_config;
 __attribute__((__section__(".timer_client_config"))) timer_client_config_t timer_config;
+__attribute__((__section__(".serial_client_config"))) serial_client_config_t serial_config;
+__attribute__((__section__(".blk_client_config"))) blk_client_config_t blk_config;
 
 // Handles to serial read and write queues respectively
 serial_queue_handle_t rx_queue_handle;
 serial_queue_handle_t tx_queue_handle;
+
+// Handle to block queue
+blk_queue_handle_t blk_queue;
 
 // Data for the guest's kernel image
 extern uint8_t _binary_guest_start[];
@@ -53,41 +60,49 @@ void init(void)
     // Initialise timer
     assert(timer_config_check_magic(&timer_config));
 
+    // Initialise block
+    assert(blk_config_check_magic(&blk_config));
+    blk_queue_init(&blk_queue, blk_config.virt.req_queue.vaddr, blk_config.virt.resp_queue.vaddr, blk_config.virt.num_buffers);
+    blk_storage_info_t* storage_info = blk_config.virt.storage_info.vaddr;
+    while (!blk_storage_is_ready(storage_info));
+    printf("Block device ready (size=%ld bytes)\n", storage_info->capacity * BLK_TRANSFER_SIZE);
+
     // Boot up guest
-    sddf_printf("Guest memory addr: %zu\n", guest_ram_vaddr);
-    sddf_printf("Guest image addr: %ld\n", _binary_guest_start);
-    sddf_printf("Guest image size linked: %ld\n", _binary_guest_size);
-    sddf_printf("Starting bootup\n");
+    printf("Guest memory addr: %zu\n", guest_ram_vaddr);
+    printf("Guest image addr: %ld\n", _binary_guest_start);
+    printf("Guest image size linked: %ld\n", _binary_guest_size);
+    printf("Starting bootup\n");
 
     char cmdline[] = "";
     bool success = guest_setup(guest_vcpu_id, _binary_guest_start, (size_t)_binary_guest_size, guest_ram_vaddr, guest_ram_size, 0, cmdline, strlen(cmdline));
-    sddf_printf("Load success: %d\n", success);
+    printf("Load success: %d\n", success);
 
     if (success) guest_resume(guest_vcpu_id);
-    else sddf_printf("Failed to load guest image\n");
+    else printf("Failed to load guest image\n");
 }
 
 void notified(microkit_channel ch)
 {
     if (ch == serial_config.tx.id) return; // Write interrupt, we get this one time when we initialise the serial, but never see it again
     if (ch == serial_config.rx.id) return; // We got input from serial, ignore as solo5 doesn't support interrupt based input
-    
+
     if (ch == timer_config.driver_id) // We got a notification about an elapsed timer, which we use to implement the poll hypercall
     {
-        if (waiting_for_timeout) 
-        {
-            waiting_for_timeout = false;
-            guest_resume(guest_vcpu_id);
-        }
-        else
-        {
-            LOG_VMM("Reached undefined state!\n"); 
-        }        
+        assert(waiting_for_timeout);
 
+        waiting_for_timeout = false;
+        guest_resume(guest_vcpu_id);
+        
         return;
     }
-    
-    LOG_VMM("Unexpected channel, ch: 0x%lx\n", ch);  
+ 
+    if (ch == blk_config.virt.id) // We got response from the block device driver
+    {
+        printf("Got response from block\n");
+        return;
+    }
+
+    printf("Unexpected channel, ch: 0x%lx\n", ch);  
 }
 
 seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo *reply_msginfo) 
@@ -103,7 +118,7 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
     {
         case HVT_HYPERCALL_HALT:
             struct hvt_hc_halt* halt = (struct hvt_hc_halt*)hc_data;            
-            LOG_VMM("Guest exited with code: %ld\n", halt->exit_status);
+            printf("Guest exited with code: %ld\n", halt->exit_status);
             break;    
                    
         case HVT_HYPERCALL_WALLTIME:
@@ -126,17 +141,21 @@ seL4_Bool fault(microkit_child child, microkit_msginfo msginfo, microkit_msginfo
             for (uint64_t i = 0; i < puts->len; i++)
             {
                 uint64_t data = *(guest_ram_vaddr + puts->data + i);
-                sddf_printf("%c", (char)data);
+                printf("%c", (char)data);
             }
             guest_resume(guest_vcpu_id);
             break;  
 
         case HVT_HYPERCALL_BLOCK_READ:
+
         case HVT_HYPERCALL_BLOCK_WRITE:
+            struct hvt_hc_block_write* b_write = (struct hvt_hc_block_write*)hc_data;
+            printf("Block Read hc (handle=%ld, size=%ld, offset=%ld, buff=%ld)\n", b_write->handle, b_write->len, b_write->offset, b_write->data);
+            //microkit_notify(blk_config.virt.id);
         case HVT_HYPERCALL_NET_READ:
         case HVT_HYPERCALL_NET_WRITE:
         default:
-            LOG_VMM("Reached unimplemented hypercall");
+            printf("Reached unimplemented hypercall");
             was_handled = false;
             break;
     }

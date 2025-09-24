@@ -1,7 +1,7 @@
 import argparse
 from typing import List
 from dataclasses import dataclass
-from sdfgen import SystemDescription, Sddf, DeviceTree, Vmm
+from sdfgen import SystemDescription, Sddf, DeviceTree
 from importlib.metadata import version
 
 assert version("sdfgen").split(".")[1] == "26", "Unexpected sdfgen version"
@@ -18,6 +18,8 @@ class Board:
     paddr_top: int
     serial: str
     timer: str
+    block: str
+    partition: int
 
 
 BOARDS: List[Board] = [
@@ -27,16 +29,10 @@ BOARDS: List[Board] = [
         paddr_top=0x6_0000_000,
         serial="pl011@9000000",
         timer="timer",
-    ),
-    Board(
-        name="rpi4b_1gb",
-        arch=SystemDescription.Arch.AARCH64,
-        paddr_top=0xFFFFFFFF,
-        serial="soc/serial@10000000",
-        timer="timer",
+        block="virtio_mmio@a003e00",
+        partition=0,
     )
 ]
-# TODO: fix pi build
 
 def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
         
@@ -79,11 +75,26 @@ def generate(sdf_file: str, output_dir: str, dtb: DeviceTree):
     serial_system = Sddf.Serial(sdf, serial_node, serial_driver, serial_virt_tx, virt_rx=serial_virt_rx)
     serial_system.add_client(vmm)
     
-    # Serialise drivers to system description
+    # Setup block
+    block_driver = ProtectionDomain("blk_driver", "blk_driver.elf", priority=200, stack_size=0x2000)
+    block_virt = ProtectionDomain("blk_virt", "blk_virt.elf", priority=199, stack_size=0x2000)    
+    sdf.add_pd(block_driver)
+    sdf.add_pd(block_virt)    
+    
+    block_node = dtb.node(board.block)
+    assert block_node is not None
+    block_system = Sddf.Blk(sdf, block_node, block_driver, block_virt)
+    partition = int(args.partition) if args.partition else board.partition
+    block_system.add_client(vmm, partition=partition)       
+    timer_system.add_client(block_driver)  
+    
+    # Serialise driver configs    
     assert timer_system.connect()
     assert timer_system.serialise_config(output_dir)
     assert serial_system.connect()
     assert serial_system.serialise_config(output_dir)
+    assert block_system.connect()
+    assert block_system.serialise_config(output_dir)
     
     # Output final system description
     with open(f"{output_dir}/{sdf_file}", "w+") as f:
@@ -97,6 +108,7 @@ if __name__ == "__main__":
     parser.add_argument("--board", required=True, choices=[b.name for b in BOARDS])
     parser.add_argument("--output", required=True)
     parser.add_argument("--sdf", required=True)
+    parser.add_argument("--partition", required=False)
 
     args = parser.parse_args()
 

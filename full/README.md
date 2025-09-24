@@ -1,12 +1,13 @@
-This example shows how you can implement a proper VMM that interacts with sel4 space hardware drivers to implement hypercalls, the SDDF project is used for driver/protocol implementation.
+This example shows how you can implement a proper VMM that interacts with sel4-space device drivers, as to service hypercalls. Device drivers used are timer, serial and block.
 <br>
-Additional details abotu SDDF can be found here:
+
+The SDDF project is used for driver/protocol implementation, additional details about SDDF can be found here:
 - https://github.com/au-ts/sddf/tree/main
 - https://trustworthy.systems/projects/drivers/sddf-design.pdf
 
 The SDDF system results in complicated and fragile system descriptions, as such the sdfgen python library is used, which allows writing python to help automate generation of a XML system description, as seen in system_gen.py
-
 <br>
+
 Library Versions required:
 
 - sdfgen 0.26.2

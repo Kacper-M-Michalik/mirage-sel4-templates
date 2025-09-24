@@ -10,7 +10,7 @@ ifeq ($(strip $(MICROKIT_CONFIG)),)
 $(error MICROKIT_CONFIG must be specified)
 endif
 
-GUEST_FILE ?= ./../example-kernels/hello.hvt
+GUEST_FILE ?= ./../example-kernels/block_test.hvt
 
 # Make absolute
 override MICROKIT_SDK := $(realpath $(MICROKIT_SDK))
@@ -62,12 +62,19 @@ $(BUILD_DIR)/$(IMAGE_FILE) $(BUILD_DIR)/$(REPORT_FILE):
 
 # Only allow qemu when built for qemu_virt_aarch64
 ifeq ($(strip $(MICROKIT_BOARD)), qemu_virt_aarch64)
-qemu: all
+qemu_disk:
+	$(DEPS)/sddf/tools/mkvirtdisk disk 1 512 16777216 GPT
+
+qemu: all qemu_disk
 	qemu-system-aarch64 -machine virt,virtualization=on,highmem=off,secure=off \
 				-cpu cortex-a53 \
-				-serial mon:stdio \
 				-device loader,file=$(BUILD_DIR)/$(IMAGE_FILE),addr=0x70000000,cpu-num=0 \
 				-m size=2G \
+				-d guest_errors \
+				-serial mon:stdio \
+				-global virtio-mmio.force-legacy=false \
+				-drive file=disk,if=none,format=raw,id=hd \
+            	-device virtio-blk-device,drive=hd \
 				-nographic
 else
 qemu:
