@@ -22,7 +22,7 @@ override BUILD_DIR := $(abspath ./build)
 # Core paths
 BOARD_DIR := $(MICROKIT_SDK)/board/$(MICROKIT_BOARD)/$(MICROKIT_CONFIG)
 ARCH := $(shell grep 'CONFIG_SEL4_ARCH  ' $(BOARD_DIR)/include/kernel/gen_config.h | cut -d' ' -f4)
-DEPS := $(realpath ./../minimal/deps)
+DEPS := $(realpath ./../deps)
 INC_DIR := $(realpath ./)
 SRC_DIR := $(realpath ./)
 

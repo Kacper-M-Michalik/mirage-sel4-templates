@@ -27,10 +27,10 @@ INC_DIR := $(realpath ./)
 SRC_DIR := $(realpath ./)
 
 # Core build files
-SYSTEM := $(realpath ./minimal.system)
+SYSTEM := $(realpath ./full-linux.system)
 IMAGE_FILE := loader.img
 REPORT_FILE := report.txt
-BUILD_MAKE := minimal.mk
+BUILD_MAKE := full-linux.mk
 
 # Export new variables for sub-makes
 export MICROKIT_BOARD
